@@ -1,0 +1,53 @@
+{
+  "name": "goal_v1",
+  "frozen": "2026-10-28",
+  "suite": "libero_goal",
+  "n_tasks": 10,
+  "trials_per_task": 50,
+  "policy": {
+    "repo": "Haozhan72/Openvla-oft-SFT-libero-goal-traj1",
+    "revision": "d20e1d447dfd87c0daa121b0739e2a379f7fe334",
+    "path": "/mnt/nfs/fjj/Models/Openvla-oft-SFT-libero-goal-traj1",
+    "index_sha256": "ca8b53fed8133ee2afcd2fc483de8febf7f5bb0f6bcb09f91189772e59e8f659",
+    "unnorm_key": "libero_goal_no_noops"
+  },
+  "wan": {
+    "repo": "RLinf/RLinf-Wan-LIBERO-Goal",
+    "revision": "bd395971c3467de3dd19e7e6c7562af48a2894a6",
+    "path": "/mnt/nfs/fjj/Models/RLinf-Wan-LIBERO-Goal"
+  },
+  "reward_model": {
+    "type": "TaskEmbedResnetRewModel",
+    "path": "/mnt/nfs/fjj/Models/RLinf-Wan-LIBERO-Goal/taskemb_resnet_rm.pth",
+    "sha256": "2cf3da891107c9267d15cad2ad6ab14f64fc851885633ea4d5cb1f07558aba7c",
+    "frozen": true,
+    "note": "shared by Wan and Code branches; repair Agent may not change it"
+  },
+  "env": {
+    "controller": "OSC_POSE",
+    "control_freq": 20,
+    "physics_dt": 0.002,
+    "num_steps_wait": 15,
+    "reset_gripper_open": true,
+    "image": [
+      256,
+      256
+    ],
+    "image_flip": "rotate 180 deg",
+    "action": "7-D env-ready after prepare_actions_for_libero",
+    "chunk": 8,
+    "max_episode_steps": 512
+  },
+  "success": {
+    "primary": "success_once (any step), RLinf eval",
+    "secondary": "success_at_end",
+    "eval_sampling": "do_sample, temperature 1.6"
+  },
+  "baseline_S0": {
+    "success_once": 0.504,
+    "success_at_end": 0.288,
+    "n": 500,
+    "note": "all 50 trials; test-split SR must be recomputed on trials 40-49"
+  },
+  "rlinf_commit": "e1a82ebf0c1af69da6ab9b1519f5f3692fe33566"
+}

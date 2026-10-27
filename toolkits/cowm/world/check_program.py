@@ -255,13 +255,24 @@ def check(program, out_dir):
             errs.append(f"object '{n}' still moving {drift[n]:.2f} mm/s after settling: unstable placement")
     if worst[0] < GATES["min_contact_mm"]:
         errs.append(f"penetration {worst[0]:.1f} mm between '{worst[1]}' and '{worst[2]}': objects overlap")
-    acts = np.clip(np.random.default_rng(0).normal(0, 0.3, size=(30, 7)), -1, 1)
-    traj = []
-    for _ in range(2):
+    # determinism + prefix causality: identical action prefixes must give bit-identical state prefixes,
+    # whatever the future actions are (no world program may depend on future actions or wall time)
+    rng = np.random.default_rng(0)
+    acts_a = np.clip(rng.normal(0, 0.3, size=(30, 7)), -1, 1)
+    acts_b = acts_a.copy()
+    acts_b[15:] = np.clip(rng.normal(0, 0.3, size=(15, 7)), -1, 1)
+
+    def run(acts):
         env.reset()
-        traj.append(np.stack([(env.step(a), env.sim.data.qpos.copy())[1] for a in acts]))
-    if float(np.abs(traj[0] - traj[1]).max()) != 0.0:
+        return np.stack([(env.step(a), env.sim.data.qpos.copy())[1] for a in acts])
+
+    ta1, ta2, tb = run(acts_a), run(acts_a), run(acts_b)
+    if float(np.abs(ta1 - ta2).max()) != 0.0:
         errs.append("world is not deterministic under identical actions")
+    if float(np.abs(ta1[:15] - tb[:15]).max()) != 0.0:
+        errs.append("prefix causality violated: changing future actions changed past states")
+    if float(np.abs(ta1[15:] - tb[15:]).max()) == 0.0:
+        errs.append("world ignores actions: different action suffixes gave identical states")
     env.reset()
     cam_res, cam_err = check_camera(env, world)
     reach_res, reach_err = check_reach(env, world)
@@ -275,7 +286,17 @@ def check(program, out_dir):
     except Exception as e:  # noqa: BLE001
         rep["render_error"] = f"{type(e).__name__}: {e}"
     rep.update(stage="checks", errors=errs, ok=not errs)
+    rep["gates"] = gates(rep)
     return rep
+
+
+def gates(rep):
+    """Layered status (plan §9.7): G0 build legal, G1 physically self-consistent and usable,
+    G2 consistent with target evidence (S5/S6), G3 consistent learning signal (S8). This verifier only
+    decides G0/G1; 'ACCEPTED' means G0+G1 and nothing more."""
+    g0 = rep.get("stage") not in ("lint", "compile", "load", "sandbox", None)
+    return {"G0_build": g0, "G1_self_consistent": bool(g0 and rep.get("ok")),
+            "G2_target_evidence": "not_run", "G3_learning_signal": "not_run"}
 
 
 def main():

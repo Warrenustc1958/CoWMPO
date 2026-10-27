@@ -19,6 +19,9 @@ import sys
 from prompts import SYSTEM, build_prompt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, ".."))
+sys.path.insert(0, os.path.join(HERE, "..", ".."))
+from cowm.world.registry import diff_programs, register  # noqa: E402
 RUN_BUILDER = os.path.join(HERE, "..", "isolation", "run_builder.sh")
 REF = os.path.join(HERE, "..", "world", "ref_goal_program.py")
 
@@ -97,7 +100,8 @@ def main():
             return client.complete(system, user, role="planner", max_tokens=8000)
 
     os.makedirs(a.run, exist_ok=True)
-    prev, report, prev_render, history = None, None, None, []
+    ev_ids = [os.path.basename(os.path.dirname(i)) for i in ev_imgs]
+    prev, report, prev_render, history, prev_vid = None, None, None, [], None
     for r in range(a.rounds):
         rdir = os.path.join(a.run, f"round{r:02d}")
         os.makedirs(rdir, exist_ok=True)
@@ -116,7 +120,15 @@ def main():
         with open(prog, "w") as f:
             f.write(code)
         rep = sandbox_check(prog, os.path.join(rdir, "world"))
+        vid = None
+        if os.path.isfile(os.path.join(rdir, "world", "world.json")):
+            vid = register(os.path.join(rdir, "world"), parent=prev_vid, source=f"{a.run}:round{r:02d}:{source}",
+                           evidence_ids=ev_ids,
+                           changed=diff_programs(prev, code) if prev is not None else {"initial": True},
+                           report=rep, cost={"round": r})
+            prev_vid = vid
         history.append({"round": r, "source": source, "ok": rep["ok"], "stage": rep.get("stage"),
+                        "gates": rep.get("gates"), "world_version": vid,
                         "errors": rep.get("errors", []), "images_sent": state["images_ok"]})
         print(f"round {r} [{source}]: {'PASS' if rep['ok'] else 'FAIL[' + str(rep.get('stage')) + ']'} "
               f"{json.dumps(rep.get('errors', []))[:400]}", flush=True)
