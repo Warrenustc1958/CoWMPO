@@ -474,6 +474,13 @@ class WorldModelEnv:
             for slot in target_slots
         ]
 
+        # Optional hook: tell the backend which episode file each slot starts (Code WM needs it).
+        set_episodes = getattr(self.backend, "set_session_episodes", None)
+        if set_episodes is not None:
+            set_episodes(
+                target_slots,
+                [self.dataset.npy_files[int(i)] for i in episode_indices],
+            )
         # One seed is shared by the batch; per-trajectory seeds are future work.
         self.backend.close_session(target_slots)
         self.backend.open_session(
