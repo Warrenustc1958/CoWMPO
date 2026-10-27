@@ -1,19 +1,18 @@
-"""S4 gate (run INSIDE the Builder sandbox): compile, lint rejection, settle, zero-action stillness,
-determinism, articulation present. Leak audit runs separately on the host (Evaluator side)."""
+"""S4 gate (run INSIDE the Builder sandbox), SDK 0.2: lint rejection, API rejection, full verifier on the
+human reference program (compile, footprints, settle, stillness, determinism, reach, articulation, camera)."""
 import json
 import os
 import sys
 import tempfile
 
-import numpy as np
-
+from cowm.world.check_program import check
 from cowm.world.compile_world import compile_world
 from cowm.world.lint import LintError, lint
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.environ.get("COWM_WORLDS", "/data_cf/cowmpo/worlds")
 
-BAD = {
+BAD_LINT = {
     "import": "import os\ndef build(w):\n    pass\n",
     "open()": "def build(w):\n    open('/etc/passwd')\n",
     "private attr": "def build(w):\n    w._objects.append(1)\n",
@@ -22,12 +21,19 @@ BAD = {
     "two functions": "def build(w):\n    pass\ndef step(s):\n    pass\n",
     "while loop": "def build(w):\n    while True:\n        pass\n",
 }
+BAD_API = {
+    "placement as param": "def build(w):\n    w.add('bowl', 'b', xy=(w.p('bx', 0.0, (-0.2, 0.2)), 0.0))\n",
+    "raw friction": "def build(w):\n    w.add('bowl', 'b', xy=(0, 0), friction=0.9)\n",
+    "set camera": "def build(w):\n    w.camera(pos=(1, 0, 1), quat=(1, 0, 0, 0))\n",
+    "set table height": "def build(w):\n    w.table(size=(1, 1, 0.05), height=0.7)\n",
+    "too-narrow bounds": "def build(w):\n    r = w.p('r', 0.07, (0.069, 0.071))\n",
+    "unknown material": "def build(w):\n    m = w.material('m', 'unobtainium')\n",
+}
 
 
 def main():
     ok = True
-    res = {}
-    for name, src in BAD.items():
+    for name, src in BAD_LINT.items():
         try:
             lint(src)
             good = False
@@ -35,59 +41,31 @@ def main():
             good = True
         ok &= good
         print(f"[{'PASS' if good else 'FAIL'}] lint rejects {name}")
+    for name, src in BAD_API.items():
+        with tempfile.NamedTemporaryFile("w", suffix=".py", dir=OUT, delete=False) as f:
+            f.write(src)
+        try:
+            compile_world(f.name, os.path.join(OUT, "_api_reject"))
+            good, why = False, "accepted"
+        except ValueError as e:
+            good, why = True, str(e)[:90]
+        os.remove(f.name)
+        ok &= good
+        print(f"[{'PASS' if good else 'FAIL'}] API rejects {name}: {why}")
 
-    wdir = compile_world(os.path.join(HERE, "ref_goal_program.py"), os.path.join(OUT, "s4_ref_goal_v0"))
-    world = json.load(open(os.path.join(wdir, "world.json")))
-    print(f"[PASS] compiled {len(world['objects'])} objects, {len(world['params'])} params, "
-          f"sha={world['world_sha256'][:12]}")
-
-    from cowm.world.env import CodeWorldEnv
-
-    env = CodeWorldEnv(wdir, use_camera_obs=False, has_renderer=False, has_offscreen_renderer=False)
-    names = [o["name"] for o in world["objects"] if o["free"]]
-    jn = [env.sim.model.joint_id2name(i) for i in range(env.sim.model.njnt)]
-    art = [j for j in jn if "drawer_" in j or j.endswith("knob")]
-    good = len(art) == 4
-    ok &= good
-    print(f"[{'PASS' if good else 'FAIL'}] articulation joints present: {art}")
-
-    hold = np.zeros(7)
-    hold[6] = -1.0
-    env.reset()
-    p0 = {n: env.object_pos(n) for n in names}
-    for _ in range(80):          # 4 s settle
-        env.step(hold)
-    p1 = {n: env.object_pos(n) for n in names}
-    for _ in range(20):          # 1 s more: should be still
-        env.step(hold)
-    p2 = {n: env.object_pos(n) for n in names}
-    drift = {n: float(np.linalg.norm(p2[n] - p1[n]) * 1000) for n in names}
-    settle = {n: float(np.linalg.norm(p1[n] - p0[n]) * 1000) for n in names}
-    pen = float(env.min_contact_dist() * 1000)
-    good = max(drift.values()) < 1.0 and pen > -3.0 and max(settle.values()) < 10.0
-    ok &= good
-    print(f"[{'PASS' if good else 'FAIL'}] settle: max settle {max(settle.values()):.2f} mm, "
-          f"final-1s drift {max(drift.values()):.3f} mm, min contact dist {pen:.2f} mm")
-    res.update(settle_mm=settle, drift_mm=drift, min_contact_mm=pen)
-
-    rng = np.random.default_rng(0)
-    acts = np.clip(rng.normal(0, 0.3, size=(40, 7)), -1, 1)
-    traj = []
-    for _ in range(2):
-        env.reset()
-        q = []
-        for a in acts:
-            env.step(a)
-            q.append(env.sim.data.qpos.copy())
-        traj.append(np.stack(q))
-    d = float(np.abs(traj[0] - traj[1]).max())
-    good = d == 0.0
-    ok &= good
-    print(f"[{'PASS' if good else 'FAIL'}] determinism: max |dqpos| over 40 random steps = {d:.2e}")
-    res["determinism_max_dqpos"] = d
-
-    with open(os.path.join(wdir, "s4_selftest.json"), "w") as f:
-        json.dump(dict(res, ok=bool(ok)), f, indent=2)
+    out = os.path.join(OUT, "s4_ref_goal_v02")
+    rep = check(os.path.join(HERE, "ref_goal_program.py"), out)
+    with open(os.path.join(out, "check_report.json"), "w") as f:
+        json.dump(rep, f, indent=2, default=str)
+    ok &= rep["ok"]
+    print(f"[{'PASS' if rep['ok'] else 'FAIL'}] reference program full verifier: stage={rep['stage']} "
+          f"errors={rep['errors']}")
+    u = rep.get("usability", {})
+    print("   reach (m):", u.get("reach_dist_m"))
+    print("   articulation (range frac):", u.get("articulation_range_frac"))
+    print("   image px:", u.get("image_px"))
+    print("   params:", rep.get("world", {}).get("params"))
+    print("   render:", rep.get("render", rep.get("render_error")))
     print("S4_SELFTEST", "PASS" if ok else "FAIL")
     sys.exit(0 if ok else 1)
 

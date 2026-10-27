@@ -2,9 +2,11 @@
 
 No Agent, no LLM: MuJoCo advances the state from the policy's actions (plan §3.11 L-Run).
 Executor semantics validated in S2 (reset pose, OSC cache refresh, gripper integrator).
+Camera = declared platform prior, placed relative to the robot base.
 """
 import json
 import os
+import xml.etree.ElementTree as ET
 
 import numpy as np
 from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
@@ -12,8 +14,17 @@ from robosuite.models.arenas import TableArena
 from robosuite.models.objects import MujocoXMLObject
 from robosuite.models.tasks import ManipulationTask
 
+from .priors import BASE_Z
+
 # shared prior (plan §3.7A): target platform reset pose; also the OSC nullspace reference
 RESET_QPOS = np.array([0.0, -1.61037389e-01, 0.0, -2.44459747e00, 0.0, 2.22675220e00, np.pi / 4])
+
+
+def _quat_mul(a, b):
+    w1, x1, y1, z1 = a
+    w2, x2, y2, z2 = b
+    return [w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2, w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+            w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2, w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2]
 
 
 class CodeWorldEnv(SingleArmEnv):
@@ -34,20 +45,25 @@ class CodeWorldEnv(SingleArmEnv):
         super().__init__(robots=robots, controller_configs=controller_configs, **kwargs)
         self.robots[0].init_qpos = RESET_QPOS.copy()
         self.reset()
+        bz = self.sim.data.body_xpos[self.sim.model.body_name2id(self.robots[0].robot_model.root_body)][2]
+        if abs(bz - BASE_Z) > 1e-3:
+            raise RuntimeError(f"robot base z {bz:.4f} != prior BASE_Z {BASE_Z}: camera prior would be misplaced")
 
     def reward(self, action=None):
         return 0.0
 
     def _load_model(self):
         super()._load_model()
-        xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
-        self.robots[0].robot_model.set_base_xpos(xpos)
+        base_x = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
+        self.robots[0].robot_model.set_base_xpos(base_x)
         arena = TableArena(table_full_size=self.table_full_size, table_friction=self.table_friction,
                            table_offset=self.table_offset)
         arena.set_origin([0, 0, 0])
         cam = self.world.get("camera")
         if cam:
-            arena.set_camera(camera_name=cam["name"], pos=cam["pos"], quat=cam["quat"],
+            base = np.array([base_x[0], base_x[1], BASE_Z])   # base orientation is identity (measured)
+            pos = (base + np.array(cam["rel_pos"])).tolist()
+            arena.set_camera(camera_name=cam["name"], pos=pos, quat=list(cam["rel_quat"]),
                              camera_attribs={"fovy": str(cam["fovy"])})
         self.objects = []
         for o in self.world["objects"]:
@@ -62,9 +78,7 @@ class CodeWorldEnv(SingleArmEnv):
         self.model = ManipulationTask(mujoco_arena=arena, mujoco_robots=[r.robot_model for r in self.robots],
                                       mujoco_objects=self.objects)
         # Multi-contact for convex meshes: the default single-contact path reports ~4.5 mm false penetration
-        # for wide flat CoACD hulls (plate). SDK-level engine setting; LIBERO does not set it (note for S6).
-        import xml.etree.ElementTree as ET
-
+        # for wide flat CoACD hulls (plate). SDK-level engine setting; the target does not set it (note for S6).
         root = self.model.root
         option = root.find("option")
         if option is None:
@@ -82,10 +96,28 @@ class CodeWorldEnv(SingleArmEnv):
                 self.sim.data.set_joint_qpos(obj.joints[0], np.array(o["pos"] + o["quat"]))
         self.sim.forward()
 
+    def obj(self, name):
+        return next(ob for ob in self.objects if ob.name == name)
+
     def object_pos(self, name):
-        obj = next(ob for ob in self.objects if ob.name == name)
-        return self.sim.data.body_xpos[self.sim.model.body_name2id(obj.root_body)].copy()
+        return self.sim.data.body_xpos[self.sim.model.body_name2id(self.obj(name).root_body)].copy()
+
+    def eef_pos(self):
+        return self._get_observations(force_update=True)["robot0_eef_pos"].copy()
 
     def min_contact_dist(self):
         d = self.sim.data
         return min((d.contact[i].dist for i in range(d.ncon)), default=0.0)
+
+    def project(self, p, cam="agentview"):
+        """World point -> (u, v) pixel in the policy image (after the 180 deg flip), depth along view axis."""
+        m, d = self.sim.model, self.sim.data
+        cid = m.camera_name2id(cam)
+        R = d.cam_xmat[cid].reshape(3, 3)
+        pc = R.T @ (np.asarray(p) - d.cam_xpos[cid])       # camera frame: x right, y up, -z forward
+        depth = -pc[2]
+        H, W = self.world["camera"]["image_size"]
+        f = 0.5 * H / np.tan(np.radians(m.cam_fovy[cid]) / 2)
+        u = W / 2 + f * pc[0] / max(depth, 1e-6)
+        v = H / 2 - f * pc[1] / max(depth, 1e-6)
+        return W - 1 - u, H - 1 - v, depth                 # 180 deg rotation of the policy image

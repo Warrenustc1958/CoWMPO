@@ -1,20 +1,20 @@
-"""SDK self-test fixture, written by a HUMAN to exercise WorldAPI. NOT Agent output, NOT a method result.
+"""SDK self-test fixture, written by a HUMAN to exercise WorldAPI 0.2. NOT Agent output, NOT a method result.
 
-Object categories follow the LIBERO-goal task language only (drawer, bowl, stove, plate, cream cheese,
-wine bottle, rack). Positions are hand-picked collision-free guesses, not LIBERO region values.
+Object categories follow the task language only (drawer, bowl, stove, plate, cream cheese, wine bottle,
+rack). Placements are hand-picked nominal guesses that pass the footprint/reach checks, not target values.
 """
 
 
 def build(w):
-    w.table(size=(1.0, 1.2, 0.05), height=0.8)
-    mu = w.p("obj_friction", 0.9, (0.3, 1.5))
-    damp = w.p("drawer_damping", 5.0, (0.5, 50.0))
-    w.add("drawer_cabinet", "cabinet", xy=(0.05, -0.30), drawer_damping=damp)
-    w.add("stove", "stove", xy=(0.05, 0.30))
-    w.add("rack", "rack", xy=(0.25, 0.10))
-    w.add("plate", "plate", xy=(0.0, 0.04), friction=mu)
-    w.add("bowl", "bowl", xy=(-0.17, -0.06), radius=w.p("bowl_radius", 0.07, (0.05, 0.09)), friction=mu)
-    w.add("box", "cream_cheese", xy=(-0.16, 0.14), friction=mu)
-    w.add("bottle", "wine_bottle", xy=(0.10, -0.06), friction=mu)
-    w.camera(pos=(0.6, 0.0, 1.4), quat=(0.653, 0.271, 0.271, 0.653), fovy=w.p("cam_fovy", 45.0, (35.0, 60.0)))
-    w.mechanism("joint_damping", "stove", 0.05, joint="knob")
+    w.table(size=(1.0, 1.2, 0.05), material=w.material("tabletop", "table_surface"))
+    ceramic = w.material("ceramic", "ceramic")
+    wood = w.material("wood", "wood")
+    w.add("drawer_cabinet", "cabinet", xy=(0.05, -0.30), material=wood,
+          drawer_damping=w.p("drawer_damping", 5.0, (0.5, 50.0)))
+    w.add("stove", "stove", xy=(0.05, 0.30), material=w.material("steel", "metal"))
+    w.add("rack", "rack", xy=(-0.05, 0.05), material=wood)
+    w.add("plate", "plate", xy=(-0.28, 0.20), material=ceramic)
+    w.add("bowl", "bowl", xy=(-0.28, -0.22), material=ceramic, radius=w.p("bowl_radius", 0.07, (0.05, 0.09)))
+    w.add("box", "cream_cheese", xy=(-0.38, 0.0), material=w.material("package", "cardboard_package"))
+    w.add("bottle", "wine_bottle", xy=(-0.25, -0.05), material=w.material("bottle", "filled_bottle"))
+    w.mechanism("joint_damping", "stove", w.p("knob_damping", 0.05, (0.005, 0.5)), joint="knob")
