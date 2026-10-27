@@ -99,9 +99,26 @@ def reach_targets(world, top):
     return tg
 
 
+def _robot_contacts(env):
+    """Names of non-robot bodies the robot/gripper is touching."""
+    m, d = env.sim.model, env.sim.data
+    out = set()
+    for i in range(d.ncon):
+        c = d.contact[i]
+        n1, n2 = m.body_id2name(m.geom_bodyid[c.geom1]), m.body_id2name(m.geom_bodyid[c.geom2])
+        r1, r2 = n1.startswith(("robot0_", "gripper0_")), n2.startswith(("robot0_", "gripper0_"))
+        if r1 != r2:
+            out.add(n2 if r1 else n1)
+    return out
+
+
 def check_reach(env, world):
+    """Reachable = end-effector gets within reach_m of the target, OR the gripper touches the target object
+    (the open fingers may hit a handle before the EE centre arrives; that still means it is reachable)."""
     top, res, errs = world["table"]["height"], {}, []
+    base = env.sim.data.body_xpos[env.sim.model.body_name2id(env.robots[0].robot_model.root_body)].copy()
     for name, target, approach in reach_targets(world, top):
+        obj = name.split(" (")[0]
         env.reset()
         for _ in range(5):
             env.step(HOLD)
@@ -112,10 +129,21 @@ def check_reach(env, world):
         else:
             _drive(env, [target[0], target[1], safe_z], 50)
         dist = _drive(env, target, 50)
-        res[name] = round(dist, 4)
-        if dist > GATES["reach_m"]:
+        touching = _robot_contacts(env)
+        touched_target = any(b == f"{obj}_main" or b.startswith(f"{obj}_") for b in touching)
+        res[name] = round(dist, 4) if not touched_target else f"touched ({dist:.3f})"
+        if dist <= GATES["reach_m"] or touched_target:
+            continue
+        horiz = float(np.linalg.norm(np.asarray(target[:2]) - base[:2]))
+        if touching:
+            errs.append(f"robot cannot reach {name}: blocked by contact with {sorted(touching)} "
+                        f"{dist * 100:.0f} cm before the target (clear the approach path; moving the object "
+                        f"closer does not help)")
+        else:
             errs.append(f"robot cannot reach {name}: end-effector stays {dist * 100:.0f} cm from target "
-                        f"{np.round(target, 3).tolist()} (move it closer to the robot base or lower it)")
+                        f"{np.round(target, 3).tolist()}, {horiz:.2f} m horizontally from the robot base "
+                        f"(outside the workspace: keep targets within ~0.8 m of the base and below ~0.45 m "
+                        f"above the table)")
     return res, errs
 
 
