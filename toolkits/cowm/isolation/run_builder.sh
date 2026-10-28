@@ -19,6 +19,7 @@ ALLOW=(
   "/data_cf/cowmpo/evidence:ro"
   "/data_cf/cowmpo/builder_assets:ro"
   "/data_cf/cowmpo/.venv-builder:ro"
+  "/data_cf/cowmpo/.venv-perception:ro"
   "/data_cf/cowmpo/worlds:rw"
   "/root/.local/share/uv/python:ro"
 )

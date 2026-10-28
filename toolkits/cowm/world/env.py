@@ -120,4 +120,6 @@ class CodeWorldEnv(SingleArmEnv):
         f = 0.5 * H / np.tan(np.radians(m.cam_fovy[cid]) / 2)
         u = W / 2 + f * pc[0] / max(depth, 1e-6)
         v = H / 2 - f * pc[1] / max(depth, 1e-6)
-        return W - 1 - u, H - 1 - v, depth                 # 180 deg rotation of the policy image
+        # The raw MuJoCo render is bottom-up (OpenGL); the policy image is raw[::-1, ::-1], which in top-down
+        # pixel coordinates is a horizontal mirror only (verified against segmentation-render centroids, S5).
+        return W - 1 - u, v, depth
