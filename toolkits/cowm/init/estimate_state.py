@@ -15,8 +15,8 @@ import argparse
 import json
 import os
 
-os.environ.setdefault("MUJOCO_GL", "osmesa")
-os.environ.setdefault("PYOPENGL_PLATFORM", "osmesa")
+os.environ.setdefault("MUJOCO_GL", "osmesa")   # Builder sandbox default; RLinf (L1) runs with egl
+os.environ.setdefault("PYOPENGL_PLATFORM", os.environ["MUJOCO_GL"])
 
 import numpy as np
 from PIL import Image
@@ -25,6 +25,7 @@ SYMMETRIC = {"bowl", "plate", "bottle"}
 XY_STEPS = [0.04, 0.02, 0.01, 0.005]
 YAW_STEPS = [0.4, 0.2, 0.1, 0.05]
 HOLD = np.array([0, 0, 0, 0, 0, 0, -1.0])
+PARK_X = -1.5   # off-table parking spot for unobserved objects contradicted by the evidence
 
 
 def yaw_quat(yaw):
@@ -167,6 +168,21 @@ def estimate(scene, masks):
                             improved = True
                             break
                     scene.set_pose(k, *pose[k])
+    # unobserved objects keep the program's nominal pose unless that pose penetrates an observed object;
+    # then the evidence contradicts it and it is parked off the table (flagged, never silently kept)
+    parked = []
+    sim = scene.env.sim
+    for k, o in enumerate(objs):
+        if k in obs_idx:
+            continue
+        gk = set(np.nonzero(scene.geom2obj == k)[0].tolist())
+        go = set(np.nonzero(np.isin(scene.geom2obj, obs_idx))[0].tolist())
+        hit = any(c.dist < -0.002 and ((c.geom1 in gk and c.geom2 in go) or (c.geom2 in gk and c.geom1 in go))
+                  for c in sim.data.contact[:sim.data.ncon])
+        if hit:
+            pose[k][0] = [PARK_X, 0.6 + 0.3 * len(parked)]
+            scene.set_pose(k, *pose[k])
+            parked.append(o["name"])
     _, seg = score()
     res = {}
     for k, o in enumerate(objs):
@@ -174,6 +190,7 @@ def estimate(scene, masks):
         res[o["name"]] = {"pos": [xy[0], xy[1], o["pos"][2]], "yaw": yaw,
                           "pos_rel_base": [xy[0] - scene.base[0], xy[1] - scene.base[1]],
                           "observed": o["name"] in masks, "mask_rejected": o["name"] in rejected,
+                          "parked": o["name"] in parked,
                           "iou": iou(seg == k, masks[o["name"]]) if o["name"] in masks else None}
     return res, best, n_render, seg
 
@@ -193,7 +210,8 @@ def main():
     # orientation self-check: segmentation and RGB renders must agree with the observation pipeline
     if np.abs(scene.rgb().astype(int) - first.astype(int)).mean() > 2.0:
         raise RuntimeError("render orientation mismatch between sim.render and observation image")
-    eps = a.episodes.split(",") if a.episodes else sorted(os.listdir(a.masks))
+    eps = a.episodes.split(",") if a.episodes else sorted(
+        e for e in os.listdir(a.masks) if os.path.isfile(os.path.join(a.masks, e, "masks.npz")))
     summary = {}
     for ep in eps:
         t0 = time.time()

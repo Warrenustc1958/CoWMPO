@@ -491,6 +491,17 @@ class WorldModelEnv:
             ).to(self.device),
             seeds=[0] * num_slots,
         )
+        # Optional hook: a backend whose frames come from its own renderer (Code WM L1) supplies the
+        # first observation itself, so frame 0 and the generated frames share one renderer.
+        session_frames = getattr(self.backend, "session_frames", None)
+        if session_frames is not None:
+            frames = session_frames(target_slots)  # list of [3, H, W] in [-1, 1], or None
+            if frames is not None:
+                for slot, fr in zip(target_slots, frames):
+                    self.current_obs[slot, :, 0] = (
+                        fr.to(self.current_obs.device, self.current_obs.dtype)
+                        .unsqueeze(1).repeat(1, self.current_obs.shape[3], 1, 1)
+                    )
 
         self._reset_metrics(env_idx=None if env_idx is None else target_slots)
 

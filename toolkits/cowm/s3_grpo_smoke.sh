@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# CoWM-PO S3: tiny GRPO run in the Code WM backend (L0) on GPUs 6-7. Own Ray head, host LIBERO lock held.
+# CoWM-PO S3/E: tiny GRPO run in the Code WM backend on GPUs 6-7. CONF selects L0 (default) or L1. Own Ray head, host LIBERO lock held.
 set -u
+CONF=${CONF:-code_libero_goal_grpo_openvlaoft_smoke}
 REPO=/mnt/nfs/fjj/Code/CoWMPO
 V=/data_cf/cowmpo/.venv-oft-wan
 RAY_PORT=6461
 RAY_TMP=/tmp/ray_cowmpo
-OUT=/data_cf/cowmpo/s3/grpo_smoke_$(date +%Y%m%d-%H%M%S)
+OUT=/data_cf/cowmpo/s3/${CONF}_$(date +%Y%m%d-%H%M%S)
 mkdir -p "$OUT"
 
 exec 9>/tmp/rlinf-libero-run.lock
@@ -24,9 +25,9 @@ else
 fi
 
 cd "$REPO"
-bash examples/embodiment/run_embodiment.sh code_libero_goal_grpo_openvlaoft_smoke > "$OUT/train.log" 2>&1
+bash examples/embodiment/run_embodiment.sh $CONF > "$OUT/train.log" 2>&1
 rc=$?
-ls -dt "$REPO"/logs/*code_libero_goal_grpo_openvlaoft_smoke 2>/dev/null | head -1 > "$OUT/rlinf_log_dir.txt"
+ls -dt "$REPO"/logs/*$CONF 2>/dev/null | head -1 > "$OUT/rlinf_log_dir.txt"
 
 # stop only this head (a bare `ray stop` would also kill other users' clusters)
 pkill -f "temp-dir=$RAY_TMP" ; pkill -f "$RAY_TMP/session" ; sleep 3

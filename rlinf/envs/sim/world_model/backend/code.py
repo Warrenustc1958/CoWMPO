@@ -55,8 +55,18 @@ class CodeBackend:
         self.condition_frame_length = int(cfg.condition_frame_length)
         self.image_size = tuple(cfg.image_size)
         self.mode = cfg.get("code_mode", "l0_oracle")
-        if self.mode != "l0_oracle":
+        if self.mode not in ("l0_oracle", "l1_world"):
             raise NotImplementedError(f"code_mode {self.mode!r} is not implemented yet")
+        if self.mode == "l1_world":
+            # L1: the Builder's compiled world_vN/ + per-episode S5 state estimate (+ S6 runtime params).
+            # No LIBERO scene and no privileged init state are touched in this mode.
+            import sys
+
+            sys.path.insert(0, str(cfg.get("cowm_toolkits", "/mnt/nfs/fjj/Code/CoWMPO/toolkits")))
+            self.world_dir = str(cfg.world_dir)
+            self.state_dir = str(cfg.state_dir)
+            self.world_friction = dict(cfg.get("world_friction", {}) or {})
+            self._first: dict[int, torch.Tensor] = {}
         self.num_steps_wait = int(cfg.get("num_steps_wait", 15))
         self.check_init_frame = bool(cfg.get("check_init_frame", True))
         self.init_frame_tol = float(cfg.get("init_frame_tol", 0.005))  # max fraction of changed pixels
@@ -101,6 +111,36 @@ class CodeBackend:
             self._suite = benchmark.get_benchmark_dict()[self._manifest["suite"]]()
         return self._suite
 
+    def _scene_for(self, slot: int):
+        cur = self._envs.get(slot)
+        if cur is None:
+            from cowm.init.estimate_state import Scene
+            from cowm.s6.g2_replay import set_friction
+
+            scene = Scene(self.world_dir)
+            for mat, mu in self.world_friction.items():
+                set_friction(scene, mat, float(mu))
+            cur = self._envs[slot] = {"task_id": None, "env": scene.env, "scene": scene}
+        return cur["scene"]
+
+    def _open_l1(self, slot: int, name: str) -> None:
+        from cowm.s6.plan_probe import apply_state
+
+        scene = self._scene_for(slot)
+        with open(os.path.join(self.state_dir, name[:-4] if name.endswith(".npy") else name,
+                               "state.json")) as f:
+            state = json.load(f)["objects"]
+        scene.reset()                       # reset + 15-step warmup, same semantics as the target
+        apply_state(scene, state)
+        img = scene.rgb().astype(np.float32) / 255.0
+        self._first[slot] = torch.from_numpy(img * 2.0 - 1.0).permute(2, 0, 1).contiguous()
+
+    def session_frames(self, env_ids: Sequence[int]):
+        """L1 only: the world's own first frame replaces the dataset condition frame."""
+        if self.mode != "l1_world":
+            return None
+        return [self._first[int(i)] for i in env_ids]
+
     def _env_for(self, slot: int, task_id: int):
         cur = self._envs.get(slot)
         if cur is not None and cur["task_id"] == task_id:
@@ -143,6 +183,10 @@ class CodeBackend:
                 raise RuntimeError(
                     f"slot {slot} has no episode identity; WorldModelEnv must call set_session_episodes"
                 )
+            if self.mode == "l1_world":
+                self._open_l1(slot, name)
+                self._open.add(slot)
+                continue
             ep = self._manifest["episodes"][name]
             env = self._env_for(slot, ep["task_id"])
             obs = self.reset_to_episode(env, ep, self._benchmark(), self.cfg.initial_image_path,
