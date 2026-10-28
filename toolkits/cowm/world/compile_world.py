@@ -35,7 +35,14 @@ def _apply_mechanism(xml_path, obj_name, mech):
     tree.write(xml_path)
 
 
-def compile_world(program_path, out_dir, param_values=None):
+CONTACT_RULES = ("legacy", "object_table_pair")
+
+
+def compile_world(program_path, out_dir, param_values=None, contact_rule="legacy"):
+    """contact_rule: "legacy" (default; MuJoCo max() friction mixing, world.json unchanged from SDK 0.2.1) or
+    "object_table_pair" (opt-in profile, SDK 0.2.2: object-table contacts use the object's material friction)."""
+    if contact_rule not in CONTACT_RULES:
+        raise ValueError(f"contact_rule must be one of {CONTACT_RULES}")
     src = open(program_path).read()
     lint(src)
     w = WorldAPI()
@@ -61,6 +68,8 @@ def compile_world(program_path, out_dir, param_values=None):
     table = {"size": [float(v) for v in resolve(t["size"], values)], "height": plat["table_height"],
              "friction": [values[f"{tmat.name}.friction"] if isinstance(tmat, MaterialRef) else 1.0, 0.005, 0.0001],
              "material": tmat.name if isinstance(tmat, MaterialRef) else None}
+    if contact_rule != "legacy":   # legacy world.json differs from SDK 0.2.1 only in the sdk_version string
+        table["contact_rule"] = contact_rule
     top = table["height"]
 
     objects = []

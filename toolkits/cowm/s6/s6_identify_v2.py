@@ -19,7 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 from cowm.s6.cmaes import cmaes
-from cowm.s6.g2_replay import G2_DYN_PX, G2_STATIC_IOU
+from cowm.s6.g2_replay import G2_DYN_PX, summarize
 
 
 def objective(s):
@@ -42,10 +42,7 @@ def g2_eval(pool, world, state, probes, masks, eps, params, tmp, chunks=4):
         return r
 
     res = [r for rs in pool.map(run, parts) for r in rs]
-    f = lambda k: float(np.mean([r[k] for r in res if r[k] is not None]))
-    s = {"n": len(res), "static_iou": f("static_iou"), "dyn_err_px": f("dyn_err_px"),
-         "final_obj_iou": f("final_obj_iou")}
-    s["G2_target_evidence"] = bool(s["static_iou"] >= G2_STATIC_IOU and s["dyn_err_px"] <= G2_DYN_PX)
+    s = summarize(res)   # shared G2 verdict (static, dynamic, terminal, coverage; audit 10.28)
     return s, res
 
 

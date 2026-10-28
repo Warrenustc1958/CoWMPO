@@ -4,6 +4,7 @@ No Agent, no LLM: MuJoCo advances the state from the policy's actions (plan §3.
 Executor semantics validated in S2 (reset pose, OSC cache refresh, gripper integrator).
 Camera = declared platform prior, placed relative to the robot base.
 """
+import copy
 import json
 import os
 import xml.etree.ElementTree as ET
@@ -88,6 +89,44 @@ class CodeWorldEnv(SingleArmEnv):
         if flag is None:
             flag = ET.SubElement(option, "flag")
         flag.set("multiccd", "enable")
+        self._table_pairs = []   # [(object index, object geom name)] in <pair> declaration order
+        if self.world["table"].get("contact_rule", "legacy") == "object_table_pair":
+            self._add_object_table_pairs(root)
+
+    def _add_object_table_pairs(self, root):
+        """Opt-in contact rule (SDK 0.2.2): object-table contacts become explicit <pair>s whose friction is the
+        object's own material value. Dynamic object-table contacts are excluded body by body; every other
+        contact (robot-table, fixture-table, object-object, gripper-object) keeps MuJoCo's default mixing and
+        no geom priority changes. Pair friction 5-vector = [mu, mu, max spin, max roll, max roll], condim =
+        max of the two geoms, solref/solimp = MuJoCo defaults (what the default mixing gives for these geoms)."""
+        table_geom = next((g for g in root.iter("geom") if (g.get("name") or "").startswith("table_collision")), None)
+        if table_geom is None:
+            raise RuntimeError("contact_rule object_table_pair: table collision geom not found")
+        parent = {c: p for p in root.iter() for c in p}
+        table_body = parent[table_geom]
+        tf = [float(v) for v in (table_geom.get("friction") or "1 0.005 0.0001").split()]
+        contact = root.find("contact")
+        if contact is None:
+            contact = ET.SubElement(root, "contact")
+        for k, (ob, o) in enumerate(zip(self.objects, self.world["objects"])):
+            if not o["free"]:
+                continue
+            bodies = set()
+            for i, g in enumerate(ob.get_obj().iter("geom")):
+                if g.get("group", "0") != "0" or g.get("contype") == "0":
+                    continue
+                if not g.get("name"):
+                    g.set("name", f"{o['name']}_col{i}")
+                of = [float(v) for v in (g.get("friction") or "1 0.005 0.0001").split()]
+                cd = max(int(g.get("condim", "3")), int(table_geom.get("condim", "3")))
+                contact.append(ET.Element("pair", {
+                    "geom1": table_geom.get("name"), "geom2": g.get("name"), "condim": str(cd),
+                    "friction": f"{of[0]:.5f} {of[0]:.5f} {max(of[1], tf[1]):.5f} {max(of[2], tf[2]):.6f} "
+                                f"{max(of[2], tf[2]):.6f}"}))
+                self._table_pairs.append((k, g.get("name")))
+                bodies.add(parent[g].get("name"))
+            for b in sorted(bodies):
+                contact.append(ET.Element("exclude", {"body1": table_body.get("name"), "body2": b}))
 
     def _reset_internal(self):
         super()._reset_internal()
@@ -101,6 +140,7 @@ class CodeWorldEnv(SingleArmEnv):
                     "mocap_pos", "mocap_quat")
     _CTRL_FIELDS = ("goal_pos", "goal_ori", "relative_ori", "ori_ref", "initial_joint", "initial_ee_pos",
                     "initial_ee_ori_mat", "torques", "new_update")
+    _OBS_FIELDS = ("_time_since_last_sample", "_current_delay", "_current_observed_value", "_sampled")
 
     def snapshot(self):
         """Everything that influences future steps: MuJoCo data (incl. solver warm start), fixture poses set
@@ -109,14 +149,21 @@ class CodeWorldEnv(SingleArmEnv):
         d, m = self.sim.data, self.sim.model
         r = self.robots[0]
         snap = {"world_sha256": self.world["world_sha256"], "time": float(d.time),
-                "timestep": int(self.timestep),
+                "timestep": int(self.timestep), "cur_time": self.cur_time, "done": bool(self.done),
                 "data": {f: np.array(getattr(d, f)).copy() for f in self._DATA_FIELDS},
                 "body_pos": np.array(m.body_pos).copy(), "body_quat": np.array(m.body_quat).copy(),
-                "geom_friction": np.array(m.geom_friction).copy(),
+                # runtime-mutable model fields (S6 apply_params edits friction / mass / inertia)
+                "geom_friction": np.array(m.geom_friction).copy(), "body_mass": np.array(m.body_mass).copy(),
+                "body_inertia": np.array(m.body_inertia).copy(), "pair_friction": np.array(m.pair_friction).copy(),
                 "ctrl": {}, "gripper_action": np.array(r.gripper.current_action).copy()}
         for f in self._CTRL_FIELDS:
             v = getattr(r.controller, f, None)
             snap["ctrl"][f] = None if v is None else (np.array(v).copy() if not isinstance(v, bool) else v)
+        # robosuite observables keep their own sampling clock, delay and cached value; the policy reads these,
+        # so they are state too (default corrupter/filter/delayer are stateless)
+        snap["observables"] = {name: {f: copy.deepcopy(getattr(ob, f)) for f in self._OBS_FIELDS}
+                               for name, ob in self._observables.items()}
+        snap["obs_cache"] = copy.deepcopy(self._obs_cache)
         return snap
 
     def restore(self, snap):
@@ -127,15 +174,26 @@ class CodeWorldEnv(SingleArmEnv):
         m.body_pos[:] = snap["body_pos"]
         m.body_quat[:] = snap["body_quat"]
         m.geom_friction[:] = snap["geom_friction"]
+        m.body_mass[:] = snap["body_mass"]
+        m.body_inertia[:] = snap["body_inertia"]
+        m.pair_friction[:] = snap["pair_friction"]
         for f, v in snap["data"].items():
             getattr(d, f)[:] = v
         d.time = snap["time"]
         self.timestep = snap["timestep"]
+        # robosuite refuses step() while done=True: restoring a pre-terminal snapshot must clear it
+        self.cur_time, self.done = snap["cur_time"], snap["done"]
         self.sim.forward()
         for f, v in snap["ctrl"].items():
             setattr(r.controller, f, None if v is None else (v.copy() if isinstance(v, np.ndarray) else v))
         r.gripper.current_action = snap["gripper_action"].copy()
         r.controller.update(force=True)
+        # restore observable clocks/caches verbatim (a forced re-sample here would itself change their state)
+        for name, st in snap["observables"].items():
+            ob = self._observables[name]
+            for f, v in st.items():
+                setattr(ob, f, copy.deepcopy(v))
+        self._obs_cache = copy.deepcopy(snap["obs_cache"])
 
     def obj(self, name):
         return next(ob for ob in self.objects if ob.name == name)

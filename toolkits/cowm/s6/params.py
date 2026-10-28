@@ -4,8 +4,12 @@
                          material also the arena table collision geom
   <material>.density   : mass/inertia of objects with that material scaled by value / compiled value
 Shape parameters change geometry and need recompilation (compile_world); they are not handled here.
-MuJoCo combines two contacting geoms' friction with max(), so an object's own friction only matters
-when it exceeds the table's -- this is why the table friction is the one that controls sliding.
+Contact rule "legacy" (default): MuJoCo combines two contacting geoms' friction with max(), so an object's
+own friction only matters when it exceeds the table's. Contact rule "object_table_pair" (opt-in, SDK 0.2.2):
+object-table contacts are explicit <pair>s and <material>.friction also sets their pair friction, so the
+object's material controls its sliding on the table; the table material then only affects the remaining
+(robot/fixture-table) contacts. Note <material>.friction still also changes that material's gripper and
+object-object contacts (one shared material value; audit 10.28).
 """
 import numpy as np
 
@@ -14,6 +18,7 @@ def _baseline(scene):
     if not hasattr(scene, "_param_base"):
         m = scene.env.sim.model
         scene._param_base = {"friction": np.array(m.geom_friction).copy(),
+                             "pair_friction": np.array(m.pair_friction).copy(),
                              "mass": np.array(m.body_mass).copy(), "inertia": np.array(m.body_inertia).copy()}
     return scene._param_base
 
@@ -23,6 +28,7 @@ def apply_params(scene, values):
     m = scene.env.sim.model
     base = _baseline(scene)
     m.geom_friction[:] = base["friction"]
+    m.pair_friction[:] = base["pair_friction"]
     m.body_mass[:] = base["mass"]
     m.body_inertia[:] = base["inertia"]
     world = scene.world
@@ -35,6 +41,11 @@ def apply_params(scene, values):
                 if o.get("material") == mat:
                     m.geom_friction[scene.geom2obj == k, 0] = v
                     hit += 1
+            for p in range(m.npair):   # object-table <pair>s (contact rule object_table_pair)
+                for g in (int(m.pair_geom1[p]), int(m.pair_geom2[p])):
+                    k = int(scene.geom2obj[g])
+                    if k >= 0 and world["objects"][k].get("material") == mat:
+                        m.pair_friction[p, 0:2] = v
             if mat == table_mat:
                 for g in range(m.ngeom):
                     if (m.geom_id2name(g) or "").startswith("table_collision"):

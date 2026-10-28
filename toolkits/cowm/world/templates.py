@@ -9,7 +9,7 @@ import os
 
 import numpy as np
 
-SDK_VERSION = "cowm-sdk-0.2.1"   # 0.2.1: rack height parameter
+SDK_VERSION = "cowm-sdk-0.2.2"   # 0.2.1: rack height parameter; 0.2.2: opt-in contact_rule object_table_pair
 
 
 def _f(v):
