@@ -96,6 +96,47 @@ class CodeWorldEnv(SingleArmEnv):
                 self.sim.data.set_joint_qpos(obj.joints[0], np.array(o["pos"] + o["quat"]))
         self.sim.forward()
 
+    # ---- snapshot / restore (KIR, branching rollouts; review item) ----
+    _DATA_FIELDS = ("qpos", "qvel", "act", "ctrl", "qacc_warmstart", "qfrc_applied", "xfrc_applied",
+                    "mocap_pos", "mocap_quat")
+    _CTRL_FIELDS = ("goal_pos", "goal_ori", "relative_ori", "ori_ref", "initial_joint", "initial_ee_pos",
+                    "initial_ee_ori_mat", "torques", "new_update")
+
+    def snapshot(self):
+        """Everything that influences future steps: MuJoCo data (incl. solver warm start), fixture poses set
+        at runtime (model.body_pos/quat), OSC controller goal state, gripper integrator, env step counter,
+        world version. Restoring and replaying the same actions reproduces the same states bitwise."""
+        d, m = self.sim.data, self.sim.model
+        r = self.robots[0]
+        snap = {"world_sha256": self.world["world_sha256"], "time": float(d.time),
+                "timestep": int(self.timestep),
+                "data": {f: np.array(getattr(d, f)).copy() for f in self._DATA_FIELDS},
+                "body_pos": np.array(m.body_pos).copy(), "body_quat": np.array(m.body_quat).copy(),
+                "geom_friction": np.array(m.geom_friction).copy(),
+                "ctrl": {}, "gripper_action": np.array(r.gripper.current_action).copy()}
+        for f in self._CTRL_FIELDS:
+            v = getattr(r.controller, f, None)
+            snap["ctrl"][f] = None if v is None else (np.array(v).copy() if not isinstance(v, bool) else v)
+        return snap
+
+    def restore(self, snap):
+        if snap["world_sha256"] != self.world["world_sha256"]:
+            raise ValueError("snapshot belongs to a different world version")
+        d, m = self.sim.data, self.sim.model
+        r = self.robots[0]
+        m.body_pos[:] = snap["body_pos"]
+        m.body_quat[:] = snap["body_quat"]
+        m.geom_friction[:] = snap["geom_friction"]
+        for f, v in snap["data"].items():
+            getattr(d, f)[:] = v
+        d.time = snap["time"]
+        self.timestep = snap["timestep"]
+        self.sim.forward()
+        for f, v in snap["ctrl"].items():
+            setattr(r.controller, f, None if v is None else (v.copy() if isinstance(v, np.ndarray) else v))
+        r.gripper.current_action = snap["gripper_action"].copy()
+        r.controller.update(force=True)
+
     def obj(self, name):
         return next(ob for ob in self.objects if ob.name == name)
 

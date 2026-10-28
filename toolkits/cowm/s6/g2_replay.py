@@ -72,8 +72,14 @@ def replay(scene, state, probe, masks_root):
             "pred_disp": disp, "per_frame": {str(s): v for s, v in out.items()}}
 
 
-def evaluate(world, state_root, probe_root, masks_root, episodes, friction=None):
+def evaluate(world, state_root, probe_root, masks_root, episodes, friction=None, params=None):
+    """friction: legacy {material: mu} (object geoms only); params: {"<mat>.friction|density": v} applied
+    with cowm.s6.params.apply_params (includes the table material)."""
+    from cowm.s6.params import apply_params
+
     scene = Scene(world)
+    if params:
+        apply_params(scene, params)
     if friction:
         for mat, v in friction.items():
             set_friction(scene, mat, v)
@@ -104,9 +110,11 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--friction", default="", help="json {material: mu}")
     p.add_argument("--episodes", default="")
+    p.add_argument("--params", default="", help='json {"tabletop.friction": 0.8, ...}')
     a = p.parse_args()
     eps = a.episodes.split(",") if a.episodes else sorted(os.listdir(a.probes))
-    res = evaluate(a.world, a.state, a.probes, a.masks, eps, json.loads(a.friction) if a.friction else None)
+    res = evaluate(a.world, a.state, a.probes, a.masks, eps, json.loads(a.friction) if a.friction else None,
+                   json.loads(a.params) if a.params else None)
     s = summarize(res)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     json.dump({"summary": s, "episodes": res}, open(a.out, "w"), indent=1)

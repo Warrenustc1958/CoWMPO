@@ -7,6 +7,8 @@ sandbox (no network, no target files). Every round is archived.
   --seed-program P : round 0 uses P instead of asking the LLM (forces the repair loop to run)
   --mock           : no network; a scripted 'agent' returns the reference program on every LLM turn
   --no-images      : text only
+  --structural-masks M : after the verifier passes, check evidence consistency (structural_check.py); a
+                     wrong template class or a missing/extra object fails the round and is reported back
 """
 import argparse
 import base64
@@ -66,6 +68,18 @@ def sandbox_check(program_path, out_dir):
     return {"ok": False, "stage": "sandbox", "errors": [proc.stdout[-1500:], proc.stderr[-1500:]]}
 
 
+def structural_check(program_path, out_dir, masks, episodes):
+    """Evidence-consistency check after the verifier passes (wrong template class / missing object)."""
+    cmd = [RUN_BUILDER, "python", "-m", "cowm.agent.structural_check", "--program", program_path,
+           "--masks", masks, "--episodes", episodes, "--out", out_dir]
+    proc = subprocess.run(cmd, capture_output=True, text=True, timeout=3600,
+                          env=dict(os.environ, CUDA_VISIBLE_DEVICES=""))
+    rep_path = os.path.join(out_dir, "structural_report.json")
+    if os.path.isfile(rep_path):
+        return json.load(open(rep_path))
+    return {"ok": False, "findings": [{"kind": "sandbox", "errors": [proc.stdout[-1500:], proc.stderr[-1500:]]}]}
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--run", required=True, help="output dir under /data_cf/cowmpo/worlds (sandbox-writable)")
@@ -76,6 +90,9 @@ def main():
     p.add_argument("--seed-program", default=None)
     p.add_argument("--mock", action="store_true")
     p.add_argument("--provider", default=None, help="CodeWorld-Safe llm_providers.yaml provider name")
+    p.add_argument("--structural-masks", default=None,
+                   help="evidence masks root; enables the structural check after the verifier passes")
+    p.add_argument("--structural-episodes", default="libero_goal_t0_i0,libero_goal_t3_i0,libero_goal_t6_i0")
     a = p.parse_args()
 
     ev_text, ev_imgs = load_evidence(a.evidence, 0 if a.no_images else a.n_images)
@@ -120,6 +137,14 @@ def main():
         with open(prog, "w") as f:
             f.write(code)
         rep = sandbox_check(prog, os.path.join(rdir, "world"))
+        if rep["ok"] and a.structural_masks:
+            srep = structural_check(prog, os.path.join(rdir, "structural"), a.structural_masks,
+                                    a.structural_episodes)
+            rep["structural"] = {k: srep.get(k) for k in ("ok", "findings", "notes", "objects")}
+            if not srep["ok"]:
+                rep.update(ok=False, stage="structural",
+                           errors=[f"{f['kind']}: {f.get('object', '')}: {f.get('hint', f.get('errors'))}"
+                                   for f in srep["findings"]])
         vid = None
         if os.path.isfile(os.path.join(rdir, "world", "world.json")):
             vid = register(os.path.join(rdir, "world"), parent=prev_vid, source=f"{a.run}:round{r:02d}:{source}",
@@ -135,7 +160,7 @@ def main():
         if rep["ok"]:
             break
         prev = code
-        report = json.dumps({k: rep.get(k) for k in ("stage", "errors", "physics", "usability")},
+        report = json.dumps({k: rep.get(k) for k in ("stage", "errors", "physics", "usability", "structural")},
                             indent=1, default=str)
         prev_render = rep.get("render") if rep.get("render") and os.path.isfile(rep["render"]) else None
     with open(os.path.join(a.run, "history.json"), "w") as f:

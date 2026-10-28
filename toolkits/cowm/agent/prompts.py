@@ -52,6 +52,12 @@ w.mechanism(kind, obj, value, joint=)
 The verifier checks: lint, compile, footprints, settling, zero-action stillness, determinism, reachability,
 articulation (drawers/knob move under a push), camera visibility. You will see its report and a render of your
 world from the agentview camera if a check fails.
+
+After those checks pass, a structural check compares your world's silhouettes with the evidence object by
+object: an evidence object you did not declare (missing), an object with no evidence counterpart (unobserved),
+or a template whose silhouette shape class differs from the evidence (mismatch: e.g. a round object built with
+a rectangular template). Fix these by adding/removing/renaming objects or changing the template; sizes are fitted
+later and need not be exact.
 """
 
 

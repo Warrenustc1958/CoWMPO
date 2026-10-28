@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from .lint import SAFE_CALLS, lint
 from .priors import MATERIALS, platform_prior
 from .templates import SDK_VERSION, TEMPLATES
-from .world_api import MECHANISMS, MaterialRef, WorldAPI, resolve, yaw_quat
+from .world_api import MECHANISMS, MaterialRef, ParamRef, WorldAPI, resolve, yaw_quat
 
 _SAFE_BUILTINS = {k: __builtins__[k] if isinstance(__builtins__, dict) else getattr(__builtins__, k)
                   for k in SAFE_CALLS}
@@ -65,6 +65,7 @@ def compile_world(program_path, out_dir, param_values=None):
 
     objects = []
     for o in w._objects:
+        param_refs = sorted(v.name for v in o["attrs"].values() if isinstance(v, ParamRef))
         attrs = {k: resolve(v, values) for k, v in o["attrs"].items()}
         fn = TEMPLATES[o["category"]]
         sig = inspect.signature(fn).parameters
@@ -79,7 +80,8 @@ def compile_world(program_path, out_dir, param_values=None):
         objects.append({"name": o["name"], "category": o["category"], "xml": os.path.relpath(res["xml"], out_dir),
                         "free": res["free"], "pos": [x, y, top + lift], "quat": yaw_quat(o["yaw"]),
                         "yaw": o["yaw"], "top_z": res["top_z"], "joints": res["joints"],
-                        "material": m.name if isinstance(m, MaterialRef) else None, "attrs": attrs})
+                        "material": m.name if isinstance(m, MaterialRef) else None, "attrs": attrs,
+                        "param_refs": param_refs})
     for mech in w._mechanisms:
         tgt = next((o for o in objects if o["name"] == mech["obj"]), None)
         if tgt is None:

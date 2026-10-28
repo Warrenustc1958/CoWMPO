@@ -13,6 +13,8 @@ os.environ.setdefault("MUJOCO_GL", "egl")
 
 import numpy as np
 
+from cowm.init.aabb import object_aabb
+
 # world-program object name -> LIBERO root-body name prefix (evaluation mapping only, Target side)
 NAME_MAP = {"cabinet": "wooden_cabinet", "stove": "flat_stove", "rack": "wine_rack", "plate": "plate",
             "bowl": "akita_black_bowl", "cream_cheese": "cream_cheese", "wine_bottle": "wine_bottle"}
@@ -67,7 +69,11 @@ def main():
             b = roots[cand[0]]
             q = d.body_xquat[b]
             yaw = float(np.arctan2(2 * (q[0] * q[3] + q[1] * q[2]), 1 - 2 * (q[2] ** 2 + q[3] ** 2)))
-            obj[ours] = {"body": cand[0], "pos_rel_base": (d.body_xpos[b] - base).tolist(), "yaw": yaw, "bid": b}
+            gids = [g for g in range(m.ngeom) if int(m.body_rootid[m.geom_bodyid[g]]) == b]
+            c, h = object_aabb(m, d, gids)
+            obj[ours] = {"body": cand[0], "pos_rel_base": (d.body_xpos[b] - base).tolist(), "yaw": yaw, "bid": b,
+                         "aabb_center_rel_base": (c - base).tolist() if c is not None else None,
+                         "aabb_half": h.tolist() if h is not None else None}
         s = sim.render(width=256, height=256, camera_name="agentview", segmentation=True)
         gid = s[..., 1].astype(np.int64)
         gid[(s[..., 0] != 5) | (gid < 0)] = -1

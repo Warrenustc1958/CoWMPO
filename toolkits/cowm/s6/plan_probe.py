@@ -47,6 +47,9 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--obj", default="bowl")
     p.add_argument("--episodes", default="")
+    p.add_argument("--mode", choices=["push", "strike"], default="push")
+    p.add_argument("--strike-steps", type=int, default=4)
+    p.add_argument("--hold-steps", type=int, default=30)
     a = p.parse_args()
     scene = Scene(a.world)
     k = scene.names.index(a.obj)
@@ -68,16 +71,31 @@ def main():
         y0, y1 = by + radius + CLEAR, by + radius - PUSH
         drive(scene, [bx, y0, z + 0.08], 1.0, acts)          # above the far (+y) side
         drive(scene, [bx, y0, z], 1.0, acts)                 # descend
-        drive(scene, [bx, y1, z], 1.0, acts, max_steps=60)   # push along -y
-        drive(scene, [bx, y1 + 0.03, z + 0.08], 1.0, acts)   # retreat
+        if a.mode == "push":
+            drive(scene, [bx, y1, z], 1.0, acts, max_steps=60)   # slow push along -y
+            strike_at = None
+        else:
+            # strike: close in to ~1 cm, then STRIKE_STEPS of full-speed -y, then hold still while the
+            # object slides freely (slide length after release depends on table friction and mass)
+            drive(scene, [bx, by + radius + 0.012, z], 1.0, acts, max_steps=40)
+            strike_at = len(acts)
+            for _ in range(a.strike_steps):
+                acts.append([0, -1.0, 0, 0, 0, 0, 1.0])
+                scene.env.step(np.array(acts[-1]))
+            for _ in range(a.hold_steps):
+                acts.append([0, 0, 0, 0, 0, 0, 1.0])
+                scene.env.step(np.array(acts[-1]))
+        drive(scene, [scene.env.eef_pos()[0], scene.env.eef_pos()[1] + 0.03, z + 0.08], 1.0, acts)  # retreat
         frames = list(range(0, len(acts) + 1, FRAME_EVERY))
+        if strike_at is not None:   # dense frames around the free slide
+            frames = sorted(set(frames) | set(range(strike_at, strike_at + a.strike_steps + a.hold_steps + 1, 3)))
         if frames[-1] != len(acts):
             frames.append(len(acts))
         d = os.path.join(a.out, ep)
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, "probe.json"), "w") as fh:
-            json.dump({"episode": ep, "obj": a.obj, "actions": acts, "frames": frames,
-                       "push": {"y0": y0, "y1": y1, "z": z}}, fh)
+            json.dump({"episode": ep, "obj": a.obj, "actions": acts, "frames": frames, "mode": a.mode,
+                       "strike_at": strike_at, "push": {"y0": y0, "y1": y1, "z": z}}, fh)
         moved = scene.env.object_pos(a.obj)[:2] - np.array([bx, by])
         print(ep, "steps", len(acts), "frames", len(frames), "pred obj displacement cm",
               np.round(moved * 100, 1), flush=True)

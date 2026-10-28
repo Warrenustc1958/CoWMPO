@@ -9,7 +9,7 @@ import os
 
 import numpy as np
 
-SDK_VERSION = "cowm-sdk-0.2"
+SDK_VERSION = "cowm-sdk-0.2.1"   # 0.2.1: rack height parameter
 
 
 def _f(v):
@@ -157,16 +157,20 @@ def stove(name, out_dir, width=0.24, depth=0.22, height=0.04, knob_damping=0.05,
             "top_z": h, "joints": ["knob"]}
 
 
-def rack(name, out_dir, width=0.24, depth=0.16, density=600.0, friction=0.7, rgba="0.45 0.3 0.2 1"):
+def rack(name, out_dir, width=0.24, depth=0.16, height=0.063, density=600.0, friction=0.7,
+         rgba="0.45 0.3 0.2 1"):
+    """Base plate, two side walls and two top bars; height is the overall top (SDK 0.2.1)."""
     def P(*a, **k):
         return _part(*a, friction=friction, density=density, **k)
 
+    wall_h = max(height - 0.018, 0.01)
+    xo = 0.22 * depth
     body = P("box", [depth / 2, width / 2, 0.005], [0, 0, 0.005], rgba)
     for s in (-1, 1):
-        body += P("box", [0.006, width / 2, 0.02], [s * 0.035, 0, 0.03], rgba)
-        body += P("cylinder", [0.008, width / 2], [s * 0.035, 0, 0.055], rgba, euler="1.5708 0 0")
-    return {"xml": _save(out_dir, name, _wrap(name, "", body, 0.063, max(width, depth) / 2)), "free": False,
-            "top_z": 0.063, "joints": []}
+        body += P("box", [0.006, width / 2, wall_h / 2], [s * xo, 0, 0.01 + wall_h / 2], rgba)
+        body += P("cylinder", [0.008, width / 2], [s * xo, 0, height - 0.008], rgba, euler="1.5708 0 0")
+    return {"xml": _save(out_dir, name, _wrap(name, "", body, height, max(width, depth) / 2)), "free": False,
+            "top_z": height, "joints": []}
 
 
 TEMPLATES = {"bowl": bowl, "plate": plate, "bottle": bottle, "box": box,

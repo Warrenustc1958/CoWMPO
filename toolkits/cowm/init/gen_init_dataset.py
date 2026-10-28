@@ -16,6 +16,7 @@ def main():
     p.add_argument("--suite", default="libero_goal")
     p.add_argument("--tasks", default="0-9", help="inclusive range, e.g. 0-9")
     p.add_argument("--trials", type=int, default=50)
+    p.add_argument("--trial-range", default="", help="inclusive range of init ids, e.g. 30-32 (overrides --trials)")
     p.add_argument("--num-steps-wait", type=int, default=15)
     p.add_argument("--size", type=int, default=256)
     p.add_argument("--out", required=True)
@@ -36,7 +37,12 @@ def main():
         bddl = os.path.join(get_libero_path("bddl_files"), task.problem_folder, task.bddl_file)
         init_states = suite.get_task_init_states(t)
         env = OffScreenRenderEnv(bddl_file_name=bddl, camera_heights=args.size, camera_widths=args.size)
-        for i in range(min(args.trials, len(init_states))):
+        if args.trial_range:
+            a0, a1 = (int(x) for x in args.trial_range.split("-"))
+            trials = range(a0, min(a1 + 1, len(init_states)))
+        else:
+            trials = range(min(args.trials, len(init_states)))
+        for i in trials:
             env.reset()
             obs = env.set_init_state(init_states[i])
             for _ in range(args.num_steps_wait):

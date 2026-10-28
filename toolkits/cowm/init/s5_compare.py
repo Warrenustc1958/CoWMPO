@@ -30,9 +30,16 @@ def main():
         sm = np.load(os.path.join(a.est, ep, "masks.npz"))
         rm = np.load(os.path.join(a.est, ep, "render_masks.npz"))
         for n, g in gt.items():
-            r = rows.setdefault(n, {"err_cm": [], "sam_iou": [], "render_iou": [], "detected": 0, "n": 0})
+            r = rows.setdefault(n, {"err_cm": [], "sam_iou": [], "render_iou": [], "detected": 0, "n": 0,
+                                    "size_err_cm": []})
             r["n"] += 1
-            e = np.array(st[n]["pos_rel_base"][:2]) - np.array(g["pos_rel_base"][:2])
+            # geometric-centre error (asset origin conventions differ, AABB centres do not)
+            if st[n].get("aabb_center_rel_base") and g.get("aabb_center_rel_base"):
+                e = np.array(st[n]["aabb_center_rel_base"][:2]) - np.array(g["aabb_center_rel_base"][:2])
+                r["size_err_cm"].append(float(np.abs(np.array(st[n]["aabb_half"]) -
+                                                     np.array(g["aabb_half"])).max() * 200))
+            else:
+                e = np.array(st[n]["pos_rel_base"][:2]) - np.array(g["pos_rel_base"][:2])
             r["err_cm"].append(float(np.linalg.norm(e) * 100))
             if n in sm.files and not st[n].get("mask_rejected"):
                 r["detected"] += 1
@@ -43,7 +50,8 @@ def main():
         f = lambda v: round(float(np.mean([x for x in v if x is not None])), 3) if any(x is not None for x in v) else None
         summ[n] = {"episodes": r["n"], "detected": r["detected"], "xy_err_cm_mean": f(r["err_cm"]),
                    "xy_err_cm_max": round(max(r["err_cm"]), 1), "sam_iou_vs_gt": f(r["sam_iou"]),
-                   "render_iou_vs_gt": f(r["render_iou"])}
+                   "render_iou_vs_gt": f(r["render_iou"]),
+                   "max_extent_err_cm": f(r["size_err_cm"]) if r["size_err_cm"] else None}
     allerr = [x for r in rows.values() for x in r["err_cm"]]
     summ["_all"] = {"xy_err_cm_mean": round(float(np.mean(allerr)), 2),
                     "frac_within_3cm": round(float(np.mean(np.array(allerr) < 3)), 3),

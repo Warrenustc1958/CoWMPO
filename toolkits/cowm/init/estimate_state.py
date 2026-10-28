@@ -25,6 +25,7 @@ SYMMETRIC = {"bowl", "plate", "bottle"}
 XY_STEPS = [0.04, 0.02, 0.01, 0.005]
 YAW_STEPS = [0.4, 0.2, 0.1, 0.05]
 HOLD = np.array([0, 0, 0, 0, 0, 0, -1.0])
+CONTACT_W = 2.0   # weight of the ground-contact term (fraction of image height between bottom rows)
 PARK_X = -1.5   # off-table parking spot for unobserved objects contradicted by the evidence
 
 
@@ -123,28 +124,54 @@ def estimate(scene, masks):
     for k in pose:
         scene.set_pose(k, *pose[k])
 
+    # ground contact: objects rest on the table, so the lowest mask row (closest to the camera) is where the
+    # object meets the table. A silhouette alone cannot separate depth from height; this term pins depth.
+    mask_bottom = {k: float(np.nonzero(masks[objs[k]["name"]])[0].max()) for k in obs_idx}
+
     def score():
         s = scene.seg()
-        return sum(iou(s == k, masks[objs[k]["name"]]) for k in obs_idx), s
+        tot = 0.0
+        for k in obs_idx:
+            mk = masks[objs[k]["name"]]
+            rows = np.nonzero(s == k)[0]
+            contact = abs(rows.max() - mask_bottom[k]) / scene.H if len(rows) else 1.0
+            tot += iou(s == k, mk) - CONTACT_W * contact
+        return tot, s
 
-    nominal, _ = score()
+    def apply(layout):
+        for k in obs_idx:
+            scene.set_pose(k, layout[k], pose[k][1])
+
     top = scene.world["table"]["height"]
-    # joint init: every observed object at its mask-centroid ray (single-object swaps get stuck when the
-    # program layout is far from the evidence); keep it if it beats the nominal layout
-    ray = {}
+    m_, d_ = scene.env.sim.model, scene.env.sim.data
+    cam = d_.cam_xpos[m_.camera_name2id("agentview")].copy()
+    from cowm.init.aabb import object_aabb
+
+    # candidate joint layouts (single-object swaps get stuck when the program layout is far from evidence)
+    layouts = {"nominal": {k: list(pose[k][0]) for k in obs_idx}, "centroid": {}, "contact": {}}
     for k in obs_idx:
         ys, xs = np.nonzero(masks[objs[k]["name"]])
         p = scene.ray_plane(xs.mean(), ys.mean(), top + objs[k]["top_z"] / 2)
-        ray[k] = [float(p[0]), float(p[1])]
-        scene.set_pose(k, ray[k], pose[k][1])
-    best, _ = score()
-    if best >= nominal:
-        for k in obs_idx:
-            pose[k][0] = ray[k]
-    else:
-        best = nominal
-        for k in obs_idx:
-            scene.set_pose(k, *pose[k])
+        layouts["centroid"][k] = [float(p[0]), float(p[1])]
+        # near edge of the footprint: ray through the bottom mask rows hits the table plane
+        sel = ys >= ys.max() - 1
+        q = scene.ray_plane(xs[sel].mean(), ys.max(), top)
+        dxy = q[:2] - cam[:2]
+        dxy /= max(np.linalg.norm(dxy), 1e-9)
+        scene.set_pose(k, q[:2], pose[k][1])
+        c, h = object_aabb(m_, d_, np.nonzero(scene.geom2obj == k)[0])
+        origin = scene.env.sim.data.body_xpos[m_.body_name2id(scene.env.objects[k].root_body)][:2]
+        r = abs(dxy[0]) * h[0] + abs(dxy[1]) * h[1]
+        layouts["contact"][k] = [float(v) for v in (q[:2] + dxy * r - (c[:2] - origin))]
+    scores = {}
+    for name, lay in layouts.items():
+        apply(lay)
+        scores[name], _ = score()
+    pick = max(scores, key=scores.get)
+    for k in obs_idx:
+        pose[k][0] = layouts[pick][k]
+    apply(layouts[pick])
+    best = scores[pick]
     # coordinate descent, larger (by mask area) objects first
     order = sorted(obs_idx, key=lambda k: -masks[objs[k]["name"]].sum())
     n_render = 0
@@ -184,13 +211,19 @@ def estimate(scene, masks):
             scene.set_pose(k, *pose[k])
             parked.append(o["name"])
     _, seg = score()
+    from cowm.init.aabb import object_aabb
+
+    m, d = scene.env.sim.model, scene.env.sim.data
     res = {}
     for k, o in enumerate(objs):
         xy, yaw = pose[k]
+        c, h = object_aabb(m, d, np.nonzero(scene.geom2obj == k)[0])
         res[o["name"]] = {"pos": [xy[0], xy[1], o["pos"][2]], "yaw": yaw,
                           "pos_rel_base": [xy[0] - scene.base[0], xy[1] - scene.base[1]],
                           "observed": o["name"] in masks, "mask_rejected": o["name"] in rejected,
                           "parked": o["name"] in parked,
+                          "aabb_center_rel_base": (c - scene.base).tolist() if c is not None else None,
+                          "aabb_half": h.tolist() if h is not None else None,
                           "iou": iou(seg == k, masks[o["name"]]) if o["name"] in masks else None}
     return res, best, n_render, seg
 
