@@ -158,6 +158,15 @@ class CodeWorldEnv(SingleArmEnv):
 
     def _reset_internal(self):
         super()._reset_internal()
+        # hard_reset=False keeps the MjModel, so runtime edits of model.body_pos/body_quat (fixture poses set
+        # by S5 apply_state / set_pose) would leak into the next episode's warmup. Restore the compiled
+        # baseline captured at the first reset (audit 10.29). Runtime dynamics params (friction/mass) persist.
+        m = self.sim.model
+        if getattr(self, "_body_base", None) is None:
+            self._body_base = (np.array(m.body_pos).copy(), np.array(m.body_quat).copy())
+        else:
+            m.body_pos[:] = self._body_base[0]
+            m.body_quat[:] = self._body_base[1]
         for obj, o in zip(self.objects, self.world["objects"]):
             if o["free"]:
                 self.sim.data.set_joint_qpos(obj.joints[0], np.array(o["pos"] + o["quat"]))
