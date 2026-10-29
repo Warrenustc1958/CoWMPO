@@ -37,6 +37,7 @@ suite param_chain      $PYW cowm/world/test_param_chain.py "$REPO" "$REPO/rlinf/
 suite g2_gate          $PY -m cowm.s6.test_g2_gate
 suite registry         $PY -m cowm.world.test_registry
 suite roles            $PY -m cowm.test_roles
+suite launcher         bash "$HERE/s7/test_launcher.sh" "$HERE/s7/run_rm_natural_v2.sh"
 FAILS=0; for c in "${CODES[@]}"; do [ "$c" -eq 0 ] || FAILS=$((FAILS + 1)); done
 echo "end $(date -Is) suites ${#CODES[@]} failed $FAILS" | tee -a "$LOGDIR/summary.txt"
 echo "logs: $LOGDIR/full.log $LOGDIR/summary.txt"
