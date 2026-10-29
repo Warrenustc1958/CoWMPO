@@ -19,10 +19,20 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 from cowm.s6.cmaes import cmaes
+from cowm import roles as R
 from cowm.s6.g2_replay import G2_DYN_PX, summarize
 
 
+INVALID_J = 1e9   # candidate violating a completeness check: never selected
+
+
 def objective(s):
+    """Fit loss over candidates that satisfy the G2 completeness checks (every episode measured, no missing
+    world object, lost-frame rate). Incomplete candidates get INVALID_J, so the optimizer cannot prefer a world
+    that drops hard evidence; if every candidate is invalid the run reports identification failure."""
+    c = s.get("checks", {})
+    if not (c.get("every_episode_complete") and c.get("no_missing_world_objects") and c.get("lost_frames")):
+        return INVALID_J
     return s["dyn_err_px"] / G2_DYN_PX + 2.0 * (1.0 - s["static_iou"])
 
 
@@ -59,13 +69,26 @@ def main():
     p.add_argument("--generations", type=int, default=6)
     p.add_argument("--popsize", type=int, default=6)
     p.add_argument("--jobs", type=int, default=24)
+    p.add_argument("--allow-dev-fit", action="store_true",
+                   help="debug only: fit on exposed dev trials when no fit-role probes exist (report is labelled)")
     a = p.parse_args()
     os.makedirs(a.out, exist_ok=True)
     tmp = os.path.join(a.out, "tmp")
     os.makedirs(tmp, exist_ok=True)
     eps = sorted(os.listdir(a.probes))
-    fit = [e for e in eps if not e.endswith("_i2")]
-    held = [e for e in eps if e.endswith("_i2")]
+    # data roles from the profile split (never from file names); gate/test episodes are refused outright
+    R.require(eps, {"fit", "dev"}, "s6_identify_v2 probe set")
+    fit, held = R.select(eps, "fit"), R.select(eps, "dev")
+    debug_dev_only = False
+    if not fit:
+        if not a.allow_dev_fit:
+            raise SystemExit("no fit-role episodes in the probe set (exposed episodes are dev forever); collect "
+                             "probes on unexposed fit trials, or pass --allow-dev-fit for a labelled debug run")
+        # debug only: fit on dev trials 0-1, evaluate on dev trial 2; the report is marked debug_dev_only
+        fit = [e for e in held if R.parse(e)[1] != 2]
+        held = [e for e in held if R.parse(e)[1] == 2]
+        debug_dev_only = True
+    print("ROLES fit", len(fit), "held(dev)", len(held), "debug_dev_only", debug_dev_only, flush=True)
     ident = json.load(open(a.ident))
     names = [n for n, v in ident.items() if v["identifiable"]]
     spec = json.load(open(os.path.join(a.shape_world, "world.json")))["params"]
@@ -94,6 +117,11 @@ def main():
                                    f_batch=batch)
             params = to_vals(z)
             log[name] = glog
+            if fbest >= INVALID_J:
+                print("CMAES", name, "IDENTIFICATION_FAILED: no candidate satisfied the completeness checks",
+                      flush=True)
+                out[name] = {"identification_failed": True, "world": world, "state": state}
+                continue
             print("CMAES", name, {k: round(v, 3) for k, v in params.items()}, "fit J", round(fbest, 3), flush=True)
         fs, _ = g2_eval(pool, world, state, a.probes, a.probe_masks, fit, params, tmp)
         hs, hres = g2_eval(pool, world, state, a.probes, a.probe_masks, held, params, tmp)
@@ -102,7 +130,8 @@ def main():
         print("VARIANT", name, "fit J", round(objective(fs), 3), "heldout",
               {k: round(v, 3) if isinstance(v, float) else v for k, v in hs.items()}, "J", round(objective(hs), 3),
               flush=True)
-    json.dump({"fit_episodes": fit, "heldout_episodes": held, "fitted_params": names, "identifiability": ident,
+    json.dump({"fit_episodes": fit, "heldout_episodes": held, "debug_dev_only": debug_dev_only,
+               "splits": R.load()["path"], "fitted_params": names, "identifiability": ident,
                "variants": out, "cmaes_log": log}, open(os.path.join(a.out, "s6_report.json"), "w"), indent=1)
     print("S6V2_DONE")
 

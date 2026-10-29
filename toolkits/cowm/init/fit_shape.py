@@ -43,9 +43,9 @@ def obj_of(param, objects):
     return None
 
 
-def evaluate(program, values, eps, masks, work):
+def evaluate(program, values, eps, masks, work, contact_rule="legacy"):
     wdir, sdir = os.path.join(work, "world"), os.path.join(work, "state")
-    compile_world(program, wdir, values)
+    compile_world(program, wdir, values, contact_rule=contact_rule)
     subprocess.run([sys.executable, "-m", "cowm.init.estimate_state", "--world", wdir, "--evidence", EVIDENCE,
                     "--masks", masks, "--out", sdir, "--episodes", ",".join(eps)],
                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -66,11 +66,13 @@ def main():
     p.add_argument("--fit", required=True, help="comma list of FIT episodes")
     p.add_argument("--jobs", type=int, default=12)
     p.add_argument("--init", default="", help="previous shape_fit.json to warm start from")
+    p.add_argument("--contact-rule", default="legacy", choices=["legacy", "object_table_pair"],
+                   help="kept for every candidate and for world_fit (recorded in shape_fit.json)")
     a = p.parse_args()
     eps = a.fit.split(",")
     os.makedirs(a.out, exist_ok=True)
     base = os.path.join(a.out, "base_world")
-    compile_world(a.program, base)
+    compile_world(a.program, base, contact_rule=a.contact_rule)
     wj = json.load(open(os.path.join(base, "world.json")))
     params = wj["params"]
     # size parameters = declared params referenced by an object's geometry (dynamics params excluded)
@@ -92,7 +94,7 @@ def main():
         n_job[0] += 1
         work = os.path.join(a.out, "jobs", f"j{n_job[0]:04d}")
         try:
-            return evaluate(a.program, values, eps, a.masks, work)
+            return evaluate(a.program, values, eps, a.masks, work, a.contact_rule)
         finally:
             shutil.rmtree(work, ignore_errors=True)
 
@@ -134,9 +136,9 @@ def main():
         log.append({"round": rnd, "values": dict(cur), "score": best_score})
         print("ROUND", rnd, {k: round(v, 3) for k, v in cur.items()},
               {k: round(v, 3) for k, v in best_score.items()}, flush=True)
-    json.dump({"fit_episodes": eps, "shape_params": shape, "values": cur, "score": best_score, "log": log},
-              open(os.path.join(a.out, "shape_fit.json"), "w"), indent=1)
-    compile_world(a.program, os.path.join(a.out, "world_fit"), cur)
+    json.dump({"fit_episodes": eps, "shape_params": shape, "values": cur, "score": best_score, "log": log,
+               "contact_rule": a.contact_rule}, open(os.path.join(a.out, "shape_fit.json"), "w"), indent=1)
+    compile_world(a.program, os.path.join(a.out, "world_fit"), cur, contact_rule=a.contact_rule)
     print("SHAPE_DONE", os.path.join(a.out, "world_fit"))
 
 

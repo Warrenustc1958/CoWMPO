@@ -42,9 +42,9 @@ def mean_stats(stats):
     return {k: round(float(np.mean([s[k] for s in stats])), 3) for k in stats[0]}
 
 
-def check(program, masks, eps, work, iou_min, values=None):
+def check(program, masks, eps, work, iou_min, values=None, contact_rule="legacy"):
     wdir, sdir = os.path.join(work, "world"), os.path.join(work, "state")
-    compile_world(program, wdir, values)
+    compile_world(program, wdir, values, contact_rule=contact_rule)
     world_objs = {o["name"]: o for o in json.load(open(os.path.join(wdir, "world.json")))["objects"]}
     subprocess.run([sys.executable, "-m", "cowm.init.estimate_state", "--world", wdir, "--evidence", EVIDENCE,
                     "--masks", masks, "--out", sdir, "--episodes", ",".join(eps)],
@@ -105,9 +105,11 @@ def main():
     p.add_argument("--episodes", required=True, help="comma list of evidence episodes")
     p.add_argument("--out", required=True)
     p.add_argument("--iou-min", type=float, default=0.5)
+    p.add_argument("--contact-rule", default="legacy", choices=["legacy", "object_table_pair"])
     a = p.parse_args()
     os.makedirs(a.out, exist_ok=True)
-    rep = check(a.program, a.masks, a.episodes.split(","), os.path.join(a.out, "work"), a.iou_min)
+    rep = check(a.program, a.masks, a.episodes.split(","), os.path.join(a.out, "work"), a.iou_min,
+                contact_rule=a.contact_rule)
     with open(os.path.join(a.out, "structural_report.json"), "w") as f:
         json.dump(rep, f, indent=1)
     print("STRUCTURAL", "OK" if rep["ok"] else "FINDINGS",

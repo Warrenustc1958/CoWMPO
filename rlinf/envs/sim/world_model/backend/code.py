@@ -119,7 +119,17 @@ class CodeBackend:
 
             scene = Scene(self.world_dir)
             for mat, mu in self.world_friction.items():
-                set_friction(scene, mat, float(mu))
+                set_friction(scene, mat, float(mu))   # also updates object-table <pair>s (audit 10.29)
+            m = scene.env.sim.model
+            self.applied_contact = {   # what the simulator actually uses, not just the config values
+                "contact_rule": scene.world["table"].get("contact_rule", "legacy"),
+                "config_friction": dict(self.world_friction),
+                "geom_friction_by_material": {
+                    mat: sorted({round(float(m.geom_friction[g, 0]), 6) for g in range(m.ngeom)
+                                 if int(scene.geom2obj[g]) >= 0
+                                 and scene.world["objects"][int(scene.geom2obj[g])].get("material") == mat})
+                    for mat in self.world_friction},
+                "pair_friction": sorted({round(float(v), 6) for v in m.pair_friction[:, 0]}) if m.npair else []}
             cur = self._envs[slot] = {"task_id": None, "env": scene.env, "scene": scene}
         return cur["scene"]
 
@@ -129,7 +139,12 @@ class CodeBackend:
         scene = self._scene_for(slot)
         with open(os.path.join(self.state_dir, name[:-4] if name.endswith(".npy") else name,
                                "state.json")) as f:
-            state = json.load(f)["objects"]
+            st = json.load(f)
+        if st.get("world_sha256") != scene.world.get("world_sha256"):
+            raise ValueError(f"state {name} was estimated for world {st.get('world_sha256')!r}, not the loaded "
+                             f"world {scene.world.get('world_sha256')!r} ({self.world_dir}); pair world_dir with "
+                             f"the state_dir estimated on it")
+        state = st["objects"]
         scene.reset()                       # reset + 15-step warmup, same semantics as the target
         apply_state(scene, state)
         img = scene.rgb().astype(np.float32) / 255.0

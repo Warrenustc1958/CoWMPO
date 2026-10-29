@@ -53,6 +53,34 @@ class CodeWorldEnv(SingleArmEnv):
     def reward(self, action=None):
         return 0.0
 
+    # ---- render-context ownership (audit 10.28): robosuite does not switch GL contexts by itself, so with
+    # several worlds in one process every render/step/reset/close must bind THIS world's context first ----
+    def _make_render_context_current(self):
+        ctx = getattr(getattr(self, "sim", None), "_render_context_offscreen", None)
+        if ctx is not None:
+            ctx.gl_ctx.make_current()
+
+    def _get_observations(self, force_update=False):
+        self._make_render_context_current()
+        return super()._get_observations(force_update=force_update)
+
+    def step(self, action):
+        self._make_render_context_current()
+        return super().step(action)
+
+    def reset(self):
+        self._make_render_context_current()
+        return super().reset()
+
+    def _destroy_sim(self):
+        self._make_render_context_current()
+        super()._destroy_sim()
+
+    def render_camera_frame(self, width, height, camera_name="agentview", segmentation=False):
+        """Render this world's camera in its own offscreen context."""
+        self._make_render_context_current()
+        return self.sim.render(width=width, height=height, camera_name=camera_name, segmentation=segmentation)
+
     def _load_model(self):
         super()._load_model()
         base_x = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])

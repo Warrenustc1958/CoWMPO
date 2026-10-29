@@ -77,7 +77,7 @@ class Scene:
         sim.forward()
 
     def _seg_raw(self):
-        s = self.env.sim.render(width=self.W, height=self.H, camera_name="agentview", segmentation=True)
+        s = self.env.render_camera_frame(width=self.W, height=self.H, camera_name="agentview", segmentation=True)
         gid = s[..., 1].astype(np.int64)
         gid[(s[..., 0] != 5) | (gid < 0)] = -1   # mjOBJ_GEOM only
         return gid[::-1, ::-1]
@@ -92,7 +92,7 @@ class Scene:
         return (gid >= 0) & self.robot_geom[np.clip(gid, 0, None)]
 
     def rgb(self):
-        img = self.env.sim.render(width=self.W, height=self.H, camera_name="agentview")
+        img = self.env.render_camera_frame(width=self.W, height=self.H, camera_name="agentview")
         return np.ascontiguousarray(img[::-1, ::-1])
 
     def ray_plane(self, pu, pv, z):

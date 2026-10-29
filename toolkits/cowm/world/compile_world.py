@@ -120,9 +120,15 @@ def main():
     p.add_argument("--program", required=True)
     p.add_argument("--out", required=True)
     p.add_argument("--params", default=None, help="json {name: value}; defaults to declared init")
+    p.add_argument("--contact-rule", default="legacy", choices=CONTACT_RULES)
     a = p.parse_args()
     vals = json.load(open(a.params)) if a.params else None
-    print("compiled", compile_world(a.program, a.out, vals))
+    print("compiled", compile_world(a.program, a.out, vals, contact_rule=a.contact_rule))
+
+
+def contact_rule_of(world_dir):
+    """Contact rule of an already compiled world (recompiles must inherit it, never fall back silently)."""
+    return json.load(open(os.path.join(world_dir, "world.json")))["table"].get("contact_rule", "legacy")
 
 
 if __name__ == "__main__":

@@ -206,7 +206,7 @@ def render_agentview(wdir, out_png):
     Image.fromarray(np.ascontiguousarray(obs["agentview_image"][::-1, ::-1])).save(out_png)
 
 
-def check(program, out_dir):
+def check(program, out_dir, contact_rule="legacy"):
     rep = {"program": program, "stage": None, "ok": False, "errors": []}
     src = open(program).read()
     try:
@@ -215,7 +215,7 @@ def check(program, out_dir):
         rep.update(stage="lint", errors=[str(e)])
         return rep
     try:
-        wdir = compile_world(program, out_dir)
+        wdir = compile_world(program, out_dir, contact_rule=contact_rule)
     except Exception as e:  # noqa: BLE001
         rep.update(stage="compile", errors=[f"{type(e).__name__}: {e}", traceback.format_exc(limit=3)])
         return rep
@@ -303,8 +303,9 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--program", required=True)
     p.add_argument("--out", required=True)
+    p.add_argument("--contact-rule", default="legacy", choices=["legacy", "object_table_pair"])
     a = p.parse_args()
-    rep = check(a.program, a.out)
+    rep = check(a.program, a.out, contact_rule=a.contact_rule)
     os.makedirs(a.out, exist_ok=True)
     with open(os.path.join(a.out, "check_report.json"), "w") as f:
         json.dump(rep, f, indent=2, default=str)

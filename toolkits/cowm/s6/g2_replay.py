@@ -1,41 +1,90 @@
-"""S6 G2 target-evidence gate + replay metrics (Builder side, plan §9.7-D).
+"""S6 G2 target-evidence gate + replay metrics (Builder side, plan §9.7-D). Manifest schema 2 (audit 10.29).
 
 Replays the probe actions the Target executed in the code world (S5 state applied) and compares the
-world's segmentation render with SAM2 masks of the returned probe frames:
-  static   = mean IoU over observed objects at step 0
-  dynamic  = probe-object mask-centroid error (px) over the probe frames
-  terminal = probe-object IoU at the last probe frame
-Evidence validity is decided ONCE, before any candidate is scored, and frozen in a manifest
-(build_validity): a candidate world never decides which evidence frames are excluded. A frame that is valid
-evidence but where the candidate does not render the probe object counts as a failure, not as a skip.
+world's segmentation render with SAM2 masks of the returned probe frames.
 
-G2 passes iff (thresholds fixed before fitting; audit 10.28 added terminal + coverage):
-  static_iou >= G2_STATIC_IOU, dyn_err_px <= G2_DYN_PX, final_obj_iou >= G2_FINAL_IOU,
-  coverage >= G2_MIN_COVERAGE  (valid frames actually measured / expected probe frames), and no episode whose
-  dynamic error is missing entirely.
-Runtime parameter overrides: <material>.friction (geom friction of objects with that material).
+Evidence (decided ONCE, frozen, content-bound):
+  build_validity() runs one designated reference world and records, per expected frame and object,
+  valid | missing_file | empty | robot_occluded, plus the sha256 of every mask file, of the probe actions and
+  frame list, of the reference world.json, and the code version. evaluate() verifies all hashes before
+  scoring: re-run perception or changed probes need a NEW manifest (EvidenceMismatch otherwise).
+
+Per episode (episode_metrics, pure):
+  static   = mean IoU at step 0 over every evidence-valid object; an object valid in evidence but absent from
+             the world counts as IoU 0 and is listed in missing_world_objects (a structural failure)
+  dynamic  = probe-object centroid error over probe frames; a frame whose evidence is valid but where the
+             candidate does not render the object is a prediction failure: counted in lost_frames and scored
+             as LOST_PX in the error mean (never silently dropped)
+  terminal = probe-object IoU at the PLANNED last probe frame only; if that frame's evidence is unusable the
+             terminal is "undeterminable" (no fallback to an earlier frame)
+  complete = static, dynamic and terminal all determinable
+
+G2 passes iff every check holds (thresholds fixed before the gate split is used):
+  static_iou >= G2_STATIC_IOU, dyn_err_px <= G2_DYN_PX, frac episodes with dyn > G2_DYN_PX <= G2_DYN_TAIL,
+  final_obj_iou >= G2_FINAL_IOU, lost-frame rate <= G2_MAX_LOST, evidence coverage >= G2_MIN_COVERAGE,
+  every episode complete, no missing world objects.
 """
 import argparse
+import hashlib
 import json
 import os
 
 import numpy as np
 
-from cowm.init.estimate_state import Scene, iou
-from cowm.s6.plan_probe import apply_state
-
+SCHEMA = 2
 G2_STATIC_IOU = 0.6
 G2_DYN_PX = 6.0
-G2_FINAL_IOU = 0.5        # added 10.28, before the formal gate split is used
-G2_MIN_COVERAGE = 0.9     # added 10.28
+G2_DYN_TAIL = 0.2         # at most this fraction of episodes may exceed G2_DYN_PX (10.29)
+G2_FINAL_IOU = 0.5
+G2_MAX_LOST = 0.02        # valid-evidence frames where the candidate lost the probe object (10.29)
+G2_MIN_COVERAGE = 0.9     # usable evidence frames / expected probe frames (property of the evidence)
 ROBOT_FRAC = 0.5          # evidence mask mostly covered by the robot -> perception error (same rule as S5)
+LOST_PX = 362.0           # error assigned to a lost frame = diagonal of the 256x256 policy image
+
+
+class EvidenceMismatch(RuntimeError):
+    pass
+
+
+def _sha_file(p):
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for b in iter(lambda: f.read(1 << 20), b""):
+            h.update(b)
+    return h.hexdigest()
+
+
+def _sha_json(x):
+    return hashlib.sha256(json.dumps(x, sort_keys=True).encode()).hexdigest()
+
+
+def _code_sha():
+    return _sha_file(os.path.abspath(__file__))
 
 
 def set_friction(scene, material, value):
+    """Incremental per-material sliding-friction override (used by the L1 backend and old scripts).
+    material: a material handle (e.g. "ceramic", "tabletop") or the class "table_surface" for the table.
+    Object materials also update their object-table <pair>s (contact rule object_table_pair), so the value
+    reaches the contact that actually controls sliding. Raises on unknown materials and invalid values."""
+    value = float(value)
+    if not np.isfinite(value) or value < 0:
+        raise ValueError("Sliding friction must be finite and non-negative")
     m = scene.env.sim.model
-    for k, o in enumerate(scene.world["objects"]):
-        if o.get("material") == material:
-            m.geom_friction[scene.geom2obj == k, 0] = value
+    selected = np.zeros(m.ngeom, dtype=bool)
+    if material in ("table_surface", scene.world["table"].get("material")):
+        for g in range(m.ngeom):
+            if (m.geom_id2name(g) or "").startswith("table_collision"):
+                selected[g] = True
+    objs = [k for k, o in enumerate(scene.world["objects"]) if o.get("material") == material]
+    for k in objs:
+        selected |= scene.geom2obj == k
+    if not selected.any():
+        raise ValueError(f"No collision geometry uses material {material!r}")
+    m.geom_friction[selected, 0] = value
+    for p in range(m.npair):
+        if any(int(scene.geom2obj[g]) in objs for g in (int(m.pair_geom1[p]), int(m.pair_geom2[p]))):
+            m.pair_friction[p, 0:2] = value
 
 
 def centroid(mask):
@@ -49,29 +98,37 @@ def mask_path(masks_root, ep, step):
 
 def default_validity(masks_root):
     """Frozen manifest lives next to the probe masks it describes (one per evidence set)."""
-    return os.path.normpath(masks_root) + "_validity.json"
+    return os.path.normpath(masks_root) + f"_validity_v{SCHEMA}.json"
+
+
+def probe_frames(probe):
+    return sorted(set(probe["frames"]) | {0})
 
 
 def build_validity(ref_world, state_root, probe_root, masks_root, episodes, out):
-    """Frozen evidence manifest. Per expected frame and object: valid | missing_file | empty | robot_occluded.
-    The robot mask comes from ONE designated reference world (the robot is the shared platform prior and is
-    driven by the same actions), so candidate worlds cannot change the evidence set."""
+    from cowm.init.estimate_state import Scene
+    from cowm.s6.plan_probe import apply_state
+
     scene = Scene(ref_world)
-    man = {"ref_world": ref_world, "robot_frac": ROBOT_FRAC, "episodes": {}}
+    man = {"schema": SCHEMA, "ref_world": ref_world,
+           "ref_world_json_sha256": _sha_file(os.path.join(ref_world, "world.json")),
+           "masks_root": os.path.abspath(masks_root), "robot_frac": ROBOT_FRAC, "code_sha256": _code_sha(),
+           "episodes": {}}
     try:
         for ep in episodes:
             state = json.load(open(os.path.join(state_root, ep, "state.json")))["objects"]
             probe = json.load(open(os.path.join(probe_root, ep, "probe.json")))
-            frames = sorted(set(probe["frames"]) | {0})
+            frames = probe_frames(probe)
             scene.reset()
             apply_state(scene, state)
-            rec = {}
+            rec, shas = {}, {}
 
             def check(step):
                 f = mask_path(masks_root, ep, step)
                 if not os.path.isfile(f):
                     rec[str(step)] = {"_frame": "missing_file"}
                     return
+                shas[str(step)] = _sha_file(f)
                 mk, rob = np.load(f), scene.robot_mask()
                 st = {}
                 for n in mk.files:
@@ -80,13 +137,14 @@ def build_validity(ref_world, state_root, probe_root, masks_root, episodes, out)
                                                     else "valid")
                 rec[str(step)] = st
 
-            if 0 in frames:
-                check(0)
+            check(0)
             for k, act in enumerate(probe["actions"], start=1):
                 scene.env.step(np.asarray(act))
                 if k in frames:
                     check(k)
-            man["episodes"][ep] = {"obj": probe["obj"], "frames": rec}
+            man["episodes"][ep] = {"obj": probe["obj"], "frames_planned": frames, "terminal_step": frames[-1],
+                                   "actions_sha256": _sha_json(probe["actions"]), "mask_sha256": shas,
+                                   "frames": rec}
     finally:
         scene.env.close()
     os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -94,69 +152,126 @@ def build_validity(ref_world, state_root, probe_root, masks_root, episodes, out)
     return man
 
 
+def verify_manifest(man, probe_root, masks_root, episodes):
+    """Raise EvidenceMismatch unless manifest, probes and mask files are exactly the frozen evidence."""
+    if man.get("schema") != SCHEMA:
+        raise EvidenceMismatch(f"manifest schema {man.get('schema')} != {SCHEMA}: build a new manifest")
+    if man.get("robot_frac") != ROBOT_FRAC:
+        raise EvidenceMismatch(f"validity rule changed (robot_frac {man.get('robot_frac')} != {ROBOT_FRAC})")
+    ref = man.get("ref_world")
+    if ref is not None:   # the reference world that decided validity must be unchanged
+        wj = os.path.join(ref, "world.json")
+        if not os.path.isfile(wj) or _sha_file(wj) != man.get("ref_world_json_sha256"):
+            raise EvidenceMismatch(f"reference world {ref} missing or changed since the manifest was frozen")
+    for ep in episodes:
+        e = man["episodes"].get(ep)
+        if e is None:
+            raise EvidenceMismatch(f"{ep}: not in the frozen manifest")
+        probe = json.load(open(os.path.join(probe_root, ep, "probe.json")))
+        if probe.get("obj") != e["obj"]:
+            raise EvidenceMismatch(f"{ep}: probe object {probe.get('obj')!r} != frozen {e['obj']!r}")
+        if _sha_json(probe["actions"]) != e["actions_sha256"] or probe_frames(probe) != e["frames_planned"]:
+            raise EvidenceMismatch(f"{ep}: probe actions/frames differ from the frozen evidence")
+        for step, st in e["frames"].items():
+            f = mask_path(masks_root, ep, int(step))
+            if "_frame" in st:
+                if os.path.isfile(f):
+                    raise EvidenceMismatch(f"{ep} f{step}: mask appeared after freezing")
+            elif not os.path.isfile(f) or _sha_file(f) != e["mask_sha256"][step]:
+                raise EvidenceMismatch(f"{ep} f{step}: mask missing or content changed")
+
+
+def frame_record(validity, step, obj, world_names, seg_iou, obj_rendered, centroid_err):
+    """One frame's outcome given the frozen validity. seg_iou: {name: IoU} for every world object;
+    obj_rendered/centroid_err: probe object in the candidate's render. Pure (used by replay and tests)."""
+    v = validity["frames"].get(str(step), {"_frame": "missing_file"})
+    if v.get("_frame") == "missing_file":
+        return {"status": "missing_file"}
+    valid = [n for n, s in v.items() if s == "valid"]
+    rec = {"iou": {n: (seg_iou.get(n, 0.0) if n in world_names else 0.0) for n in valid},
+           "missing_world_objects": sorted(n for n in valid if n not in world_names)}
+    if step == 0:
+        rec["status"] = "static"
+    elif v.get(obj) == "robot_occluded":
+        rec["status"] = "robot_occluded"
+    elif v.get(obj) != "valid":
+        rec["status"] = "obj_absent_in_evidence"
+    elif not obj_rendered:
+        rec["status"] = "obj_not_rendered"
+    else:
+        rec["status"] = "valid"
+        rec["obj_centroid_err_px"] = float(centroid_err)
+    return rec
+
+
+def episode_metrics(ep, obj, terminal_step, per_frame):
+    """per_frame: {step: frame_record}. Pure: everything a gate decision needs for one episode."""
+    st = {"expected": 0, "valid": 0, "missing_file": 0, "obj_absent_in_evidence": 0, "robot_occluded": 0,
+          "obj_not_rendered": 0}
+    errs = []
+    for s in sorted(k for k in per_frame if k > 0):
+        r = per_frame[s]
+        st["expected"] += 1
+        st[r["status"]] += 1
+        if r["status"] == "valid":
+            errs.append(r["obj_centroid_err_px"])
+        elif r["status"] == "obj_not_rendered":
+            errs.append(LOST_PX)
+    f0 = per_frame.get(0, {})
+    static = float(np.mean(list(f0["iou"].values()))) if f0.get("iou") else None
+    t = per_frame.get(terminal_step, {})
+    if t.get("status") == "valid":
+        term = t["iou"].get(obj)
+    elif t.get("status") == "obj_not_rendered":
+        term = 0.0
+    else:
+        term = None   # undeterminable: no fallback to an earlier frame
+    missing = sorted({n for r in per_frame.values() for n in r.get("missing_world_objects", [])})
+    dyn = float(np.mean(errs)) if errs else None
+    return {"episode": ep, "obj": obj, "static_iou": static, "dyn_err_px": dyn,
+            "dyn_err_px_max": max(errs) if errs else None, "final_obj_iou": term,
+            "terminal_step": terminal_step, "terminal_status": t.get("status", "missing_file"),
+            "missing_world_objects": missing, "frame_status": st,
+            "complete": static is not None and dyn is not None and term is not None}
+
+
 def replay(scene, state, probe, masks_root, validity):
+    from cowm.init.estimate_state import iou
+    from cowm.s6.plan_probe import apply_state
+
     ep, obj = probe["episode"], probe["obj"]
     k_obj = scene.names.index(obj)
     scene.reset()
     apply_state(scene, state)
     p0 = scene.env.object_pos(obj)[:2].copy()
-    frames, out = set(probe["frames"]) | {0}, {}
-    status = {"expected": 0, "valid": 0, "missing_file": 0, "obj_absent_in_evidence": 0, "robot_occluded": 0,
-              "obj_not_rendered": 0}
+    frames, out = set(probe_frames(probe)), {}
 
     def measure(step):
-        v = validity["frames"].get(str(step), {"_frame": "missing_file"})
-        if step > 0:
-            status["expected"] += 1
-        if v.get("_frame") == "missing_file":
-            if step > 0:
-                status["missing_file"] += 1
-            out[step] = {"status": "missing_file"}
+        f = mask_path(masks_root, ep, step)
+        if not os.path.isfile(f):
+            out[step] = frame_record(validity, step, obj, scene.names, {}, False, None)
             return
-        mk, seg = np.load(mask_path(masks_root, ep, step)), scene.seg()
-        ok = [n for n, s in v.items() if s == "valid"]
-        rec = {"iou": {n: iou(seg == k, mk[n]) for k, n in enumerate(scene.names) if n in ok},
-               "missing_world_objects": sorted(n for n in ok if n not in scene.names)}
-        if step > 0:
-            if v.get(obj) == "robot_occluded":
-                status["robot_occluded"] += 1
-                rec["status"] = "robot_occluded"
-            elif v.get(obj) != "valid":
-                status["obj_absent_in_evidence"] += 1
-                rec["status"] = "obj_absent_in_evidence"
-            else:
-                c_obs, c_sim = centroid(mk[obj]), centroid(seg == k_obj)
-                if c_sim is None:   # valid evidence, candidate lost the object: a failure, not a skip
-                    status["obj_not_rendered"] += 1
-                    rec["status"] = "obj_not_rendered"
-                else:
-                    status["valid"] += 1
-                    rec["status"] = "valid"
-                    rec["obj_centroid_err_px"] = float(np.linalg.norm(c_obs - c_sim))
-        out[step] = rec
+        mk, seg = np.load(f), scene.seg()
+        seg_iou = {n: iou(seg == k, mk[n]) for k, n in enumerate(scene.names) if n in mk.files}
+        c_obs, c_sim = centroid(mk[obj]) if obj in mk.files else None, centroid(seg == k_obj)
+        err = float(np.linalg.norm(c_obs - c_sim)) if c_obs is not None and c_sim is not None else None
+        out[step] = frame_record(validity, step, obj, scene.names, seg_iou, c_sim is not None, err)
 
-    if 0 in frames:
-        measure(0)
+    measure(0)
     for k, act in enumerate(probe["actions"], start=1):
         scene.env.step(np.asarray(act))
         if k in frames:
             measure(k)
-    disp = (scene.env.object_pos(obj)[:2] - p0).tolist()
-    steps = sorted(s for s in out if s > 0)
-    static = (float(np.mean(list(out[0]["iou"].values()))) if 0 in out and out[0].get("iou") else None)
-    errs = [out[s]["obj_centroid_err_px"] for s in steps if "obj_centroid_err_px" in out[s]]
-    dyn = float(np.mean(errs)) if errs else None
-    term = [s for s in steps if out[s].get("status") in ("valid", "obj_not_rendered")]
-    last = (0.0 if out[term[-1]]["status"] == "obj_not_rendered" else out[term[-1]]["iou"].get(obj)) if term else None
-    return {"episode": ep, "static_iou": static, "dyn_err_px": dyn, "dyn_err_px_max": max(errs) if errs else None,
-            "final_obj_iou": last, "frame_status": status, "pred_disp": disp,
-            "per_frame": {str(s): v for s, v in out.items()}}
+    m = episode_metrics(ep, obj, validity["terminal_step"], out)
+    m["pred_disp"] = (scene.env.object_pos(obj)[:2] - p0).tolist()
+    m["per_frame"] = {str(s): v for s, v in out.items()}
+    return m
 
 
 def evaluate(world, state_root, probe_root, masks_root, episodes, friction=None, params=None, validity_path=None):
-    """friction: legacy {material: mu} (object geoms only); params: {"<mat>.friction|density": v} applied
-    with cowm.s6.params.apply_params (includes the table material). validity_path defaults to
-    default_validity(masks_root) and must already exist (built once with --build-validity)."""
+    """friction: legacy {material: mu}, applied through apply_params as {"<mat>.friction": mu};
+    params: {"<mat>.friction|density": v}. validity_path defaults to default_validity(masks_root)."""
+    from cowm.init.estimate_state import Scene
     from cowm.s6.params import apply_params
 
     validity_path = validity_path or default_validity(masks_root)
@@ -164,22 +279,24 @@ def evaluate(world, state_root, probe_root, masks_root, episodes, friction=None,
         raise FileNotFoundError(f"frozen evidence manifest {validity_path} missing; build it once with "
                                 f"g2_replay --build-validity --world <reference world>")
     man = json.load(open(validity_path))
+    verify_manifest(man, probe_root, masks_root, episodes)
+    values = dict(params or {})
+    values.update({f"{mat}.friction": float(v) for mat, v in (friction or {}).items()})
     scene = Scene(world)
     try:
-        if params:
-            apply_params(scene, params)
-        if friction:
-            for mat, v in friction.items():
-                set_friction(scene, mat, v)
+        if values:
+            apply_params(scene, values)
         res = []
         for ep in episodes:
-            if ep not in man["episodes"]:
-                raise ValueError(f"{ep} has no frozen evidence validity; run --build-validity first")
             state = json.load(open(os.path.join(state_root, ep, "state.json")))["objects"]
             probe = json.load(open(os.path.join(probe_root, ep, "probe.json")))
             res.append(replay(scene, state, probe, masks_root, man["episodes"][ep]))
+        res_info = {"applied_params": values, "contact_rule": scene.world["table"].get("contact_rule", "legacy"),
+                    "validity": os.path.abspath(validity_path)}
     finally:
         scene.env.close()
+    for r in res:
+        r["run"] = res_info
     return res
 
 
@@ -189,26 +306,31 @@ def summarize(res):
         return float(np.mean(v)) if v else None
 
     st = {k: int(sum(r["frame_status"][k] for r in res)) for k in res[0]["frame_status"]} if res else {}
-    measured = st.get("valid", 0) + st.get("obj_not_rendered", 0)
-    usable = st.get("expected", 0) - st.get("missing_file", 0) - st.get("obj_absent_in_evidence", 0) \
-        - st.get("robot_occluded", 0)
+    exp = st.get("expected", 0)
+    unusable = st.get("missing_file", 0) + st.get("obj_absent_in_evidence", 0) + st.get("robot_occluded", 0)
+    usable = exp - unusable
+    dyn = [r["dyn_err_px"] for r in res if r["dyn_err_px"] is not None]
     s = {"n": len(res), "static_iou": mean("static_iou"), "dyn_err_px": mean("dyn_err_px"),
-         "dyn_err_px_p90_episode": (float(np.quantile([r["dyn_err_px"] for r in res if r["dyn_err_px"] is not None],
-                                                       0.9)) if any(r["dyn_err_px"] is not None for r in res)
-                                    else None),
+         "dyn_err_px_p90_episode": float(np.quantile(dyn, 0.9)) if dyn else None,
+         "dyn_tail_frac": float(np.mean([d > G2_DYN_PX for d in dyn])) if dyn else None,
          "final_obj_iou": mean("final_obj_iou"), "frame_status": st,
-         "evidence_coverage": (usable / st["expected"]) if st.get("expected") else None,
-         "coverage": (st.get("valid", 0) / st["expected"]) if st.get("expected") else None,
-         "episodes_without_dyn": [r["episode"] for r in res if r["dyn_err_px"] is None],
-         "measured_frames": measured}
+         "evidence_coverage": usable / exp if exp else None,
+         "lost_rate": st.get("obj_not_rendered", 0) / usable if usable else None,
+         "incomplete_episodes": [r["episode"] for r in res if not r["complete"]],
+         "missing_world_objects": sorted({n for r in res for n in r["missing_world_objects"]}),
+         "terminal_undeterminable": [r["episode"] for r in res if r["final_obj_iou"] is None]}
     checks = {"static": s["static_iou"] is not None and s["static_iou"] >= G2_STATIC_IOU,
               "dynamic": s["dyn_err_px"] is not None and s["dyn_err_px"] <= G2_DYN_PX,
+              "dynamic_tail": s["dyn_tail_frac"] is not None and s["dyn_tail_frac"] <= G2_DYN_TAIL,
               "terminal": s["final_obj_iou"] is not None and s["final_obj_iou"] >= G2_FINAL_IOU,
-              "coverage": s["coverage"] is not None and s["coverage"] >= G2_MIN_COVERAGE,
-              "every_episode_measured": not s["episodes_without_dyn"]}
+              "lost_frames": s["lost_rate"] is not None and s["lost_rate"] <= G2_MAX_LOST,
+              "evidence_coverage": s["evidence_coverage"] is not None and s["evidence_coverage"] >= G2_MIN_COVERAGE,
+              "every_episode_complete": bool(res) and not s["incomplete_episodes"],
+              "no_missing_world_objects": not s["missing_world_objects"]}
     s["checks"] = checks
-    s["thresholds"] = {"static_iou": G2_STATIC_IOU, "dyn_err_px": G2_DYN_PX, "final_obj_iou": G2_FINAL_IOU,
-                       "coverage": G2_MIN_COVERAGE}
+    s["thresholds"] = {"static_iou": G2_STATIC_IOU, "dyn_err_px": G2_DYN_PX, "dyn_tail_frac": G2_DYN_TAIL,
+                       "final_obj_iou": G2_FINAL_IOU, "lost_rate": G2_MAX_LOST, "coverage": G2_MIN_COVERAGE,
+                       "lost_px": LOST_PX}
     s["G2_target_evidence"] = bool(all(checks.values()))
     return s
 
