@@ -91,11 +91,24 @@
     "libero_goal_t8_i2",
     "libero_goal_t9_i0",
     "libero_goal_t9_i1",
-    "libero_goal_t9_i2"
+    "libero_goal_t9_i2",
+    "libero_goal_t1_i5",
+    "libero_goal_t5_i5"
   ],
   "rules": [
     "an episode shown to the Agent (prompt, image, report) is dev forever",
     "gate returns only accept/reject + aggregates; max 5 gate queries per world version",
     "test is sealed until the method (SDK, verifier, thresholds) is frozen"
+  ],
+  "exposure_log": [
+    {
+      "date": "2026-10-30",
+      "episodes": [
+        "libero_goal_t1_i5",
+        "libero_goal_t5_i5"
+      ],
+      "reason": "named as wrong-association instances (rack->cabinet, cream_cheese->bowl) in the S5 GT diagnostic report used to plan the S5 association fix; per rule 1 they are dev forever",
+      "not_exposed": "the other 28 fit3 episodes appeared only in aggregate counts"
+    }
   ]
 }

@@ -29,7 +29,11 @@ def main():
            "require_rejects": raises(lambda: R.require(["libero_goal_t0_i3", "libero_goal_t5_i30"],
                                                        {"fit", "dev"}, "test", s)),
            "bad_name": raises(lambda: R.role("episode_7", s)),
-           "no_fit_in_dev3": R.select(dev3, "fit", s) == []}
+           "no_fit_in_dev3": R.select(dev3, "fit", s) == [],
+           # 10-30: two fit3 instances named in the S5 diagnostic are exposed -> dev; the other 28 stay fit
+           "fit3_named_are_dev": all(R.role(e, s) == "dev" for e in ("libero_goal_t1_i5", "libero_goal_t5_i5")),
+           "fit3_rest_fit": len(R.select([f"libero_goal_t{t}_i{i}" for t in range(10) for i in (3, 4, 5)],
+                                         "fit", s)) == 28}
     ok = all(res.values())
     print(" ".join(f"{k}={v}" for k, v in res.items()))
     print("ROLES_TEST", "PASS" if ok else "FAIL")
