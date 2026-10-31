@@ -1,0 +1,183 @@
+{
+ "identity_check": {
+  "static_iou": [
+   0.6986899536113201,
+   0.6986899536113201
+  ],
+  "robot_iou": [
+   0.9074871509363415,
+   0.9074871509363415
+  ]
+ },
+ "identity_ok": true,
+ "candidates": [
+  {
+   "index": 0,
+   "global_roll_deg": 0.0,
+   "global_dy": -0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand00/world",
+   "world_tree_sha256": "a5e55f8b25fc370dd082fac97463f40ec3514bb27ce22479aecd18cf6227b2e4",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6429472649534368,
+   "robot_iou": 0.9093697940780774,
+   "loss": 0.628943352812331
+  },
+  {
+   "index": 1,
+   "global_roll_deg": 0.0,
+   "global_dy": 0.0,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand01/world",
+   "world_tree_sha256": "b8d8c2728584ab591f2580092d08e9e4f416db98a4fffa1fcceaa8ca5529309b",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6986899536113201,
+   "robot_iou": 0.9074871509363415,
+   "loss": 0.5788485935796555
+  },
+  {
+   "index": 2,
+   "global_roll_deg": 0.0,
+   "global_dy": 0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand02/world",
+   "world_tree_sha256": "45873020df57a365b603b8924259491b08a843a06b378b6158f8eb5ff8ae4fd1",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.7079855834624641,
+   "robot_iou": 0.8939263112149737,
+   "loss": 0.6102354828926149
+  },
+  {
+   "index": 3,
+   "global_roll_deg": 3.0,
+   "global_dy": -0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand03/world",
+   "world_tree_sha256": "f26807bb36e0d4434d911031b5dc0ac70e3ab806c32dcdf4ec7e5da30de0014f",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6801842750413463,
+   "robot_iou": 0.9115883173748899,
+   "loss": 0.5850507728339841
+  },
+  {
+   "index": 4,
+   "global_roll_deg": 3.0,
+   "global_dy": 0.0,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand04/world",
+   "world_tree_sha256": "c7e0094cce3fb558c25a4394e2a5021956eddec6d5012193a5b35a3281515c04",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6961134655139003,
+   "robot_iou": 0.8912680214949853,
+   "loss": 0.6300824700011438
+  },
+  {
+   "index": 5,
+   "global_roll_deg": 3.0,
+   "global_dy": 0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand05/world",
+   "world_tree_sha256": "1ae73efd0d2bd5c8e1e6266b74b0749544ae3f29596e6633640848797866fd20",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6783292728371569,
+   "robot_iou": 0.8846300896844933,
+   "loss": 0.6677804581093632
+  },
+  {
+   "index": 6,
+   "global_roll_deg": 6.0,
+   "global_dy": -0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand06/world",
+   "world_tree_sha256": "455d7c5aecd5e546c5c4c4c5ee233ca845d9dc69519033b030046462f9b0cfbb",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6638266008755277,
+   "robot_iou": 0.8878265543312925,
+   "loss": 0.6726937361305947
+  },
+  {
+   "index": 7,
+   "global_roll_deg": 6.0,
+   "global_dy": 0.0,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand07/world",
+   "world_tree_sha256": "d8a296ef6dfb716e841e2f08e3ee77bd9982bb65e17a060a315d4ed9b79879ff",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6618063755969955,
+   "robot_iou": 0.8884620105794397,
+   "loss": 0.6728075926646853
+  },
+  {
+   "index": 8,
+   "global_roll_deg": 6.0,
+   "global_dy": 0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand08/world",
+   "world_tree_sha256": "2c702b2dd07cf58f9ac55a77312b9e5884c0699a78e6417a9c58b7992c6121b2",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6298475425312957,
+   "robot_iou": 0.8825804167340325,
+   "loss": 0.7224112072666067
+  },
+  {
+   "index": 9,
+   "global_roll_deg": 9.0,
+   "global_dy": -0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand09/world",
+   "world_tree_sha256": "f105332c7620eaf9531c6a21bf1996b8afe21db90b33bf291ec4738c91baf8a2",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6290381099182903,
+   "robot_iou": 0.8903743728832089,
+   "loss": 0.6998387714320831
+  },
+  {
+   "index": 10,
+   "global_roll_deg": 9.0,
+   "global_dy": 0.0,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand10/world",
+   "world_tree_sha256": "204443b8e8e06f23991b37e08dd7e14d239055d0ddf6fc4974af384352d23d70",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.6166734441821148,
+   "robot_iou": 0.881421579726482,
+   "loss": 0.7390618166384391
+  },
+  {
+   "index": 11,
+   "global_roll_deg": 9.0,
+   "global_dy": 0.01,
+   "side_hf": 0.02,
+   "side_hb": 0.005,
+   "side_ye": 0.05,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_global_dev_v27/cand11/world",
+   "world_tree_sha256": "ce0de22af047808ad79cd01c2968dcbaebf58bbc4252ef17660ec311dbe09598",
+   "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+   "static_iou": 0.5879934789388412,
+   "robot_iou": 0.8729746700192157,
+   "loss": 0.7930825110035117
+  }
+ ]
+}

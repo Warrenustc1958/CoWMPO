@@ -1,0 +1,139 @@
+{
+ "model": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03",
+ "GT_inputs": false,
+ "Target_numbers_read": false,
+ "rows": [
+  {
+   "key": "acc24_x+060_y+040",
+   "first_step": 217,
+   "rack_geom": 186,
+   "geom_size": [
+    0.0534,
+    0.0703,
+    0.004
+   ],
+   "geom_local_pos": [
+    0.0534,
+    -0.0124,
+    0.2858
+   ],
+   "contact_local": [
+    0.0381,
+    0.0314,
+    0.2892
+   ],
+   "contact_z_above_table": 0.2892,
+   "eef_z_above_table": 0.2981
+  },
+  {
+   "key": "acc24_x+060_y-040",
+   "first_step": 217,
+   "rack_geom": 186,
+   "geom_size": [
+    0.0534,
+    0.0703,
+    0.004
+   ],
+   "geom_local_pos": [
+    0.0534,
+    -0.0124,
+    0.2858
+   ],
+   "contact_local": [
+    0.0397,
+    -0.0476,
+    0.2891
+   ],
+   "contact_z_above_table": 0.2891,
+   "eef_z_above_table": 0.2979
+  },
+  {
+   "key": "acc24_x+080_y+040",
+   "first_step": 217,
+   "rack_geom": 186,
+   "geom_size": [
+    0.0534,
+    0.0703,
+    0.004
+   ],
+   "geom_local_pos": [
+    0.0534,
+    -0.0124,
+    0.2858
+   ],
+   "contact_local": [
+    0.058,
+    0.0319,
+    0.2892
+   ],
+   "contact_z_above_table": 0.2892,
+   "eef_z_above_table": 0.298
+  },
+  {
+   "key": "acc24_x+080_y-040",
+   "first_step": 215,
+   "rack_geom": 184,
+   "geom_size": [
+    0.008,
+    0.0412,
+    0.008
+   ],
+   "geom_local_pos": [
+    0.0534,
+    -0.0412,
+    0.2968
+   ],
+   "contact_local": [
+    0.0595,
+    -0.047,
+    0.3043
+   ],
+   "contact_z_above_table": 0.3043,
+   "eef_z_above_table": 0.3132
+  },
+  {
+   "key": "acc24_x+100_y+040",
+   "first_step": 217,
+   "rack_geom": 186,
+   "geom_size": [
+    0.0534,
+    0.0703,
+    0.004
+   ],
+   "geom_local_pos": [
+    0.0534,
+    -0.0124,
+    0.2858
+   ],
+   "contact_local": [
+    0.0779,
+    0.0324,
+    0.2891
+   ],
+   "contact_z_above_table": 0.2891,
+   "eef_z_above_table": 0.2979
+  },
+  {
+   "key": "acc24_x+100_y-040",
+   "first_step": 217,
+   "rack_geom": 186,
+   "geom_size": [
+    0.0534,
+    0.0703,
+    0.004
+   ],
+   "geom_local_pos": [
+    0.0534,
+    -0.0124,
+    0.2858
+   ],
+   "contact_local": [
+    0.0794,
+    -0.0466,
+    0.2892
+   ],
+   "contact_z_above_table": 0.2892,
+   "eef_z_above_table": 0.298
+  }
+ ]
+}

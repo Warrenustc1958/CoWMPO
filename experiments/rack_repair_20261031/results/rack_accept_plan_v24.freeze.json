@@ -1,0 +1,142 @@
+{
+ "frozen_model": {
+  "result": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03/result.json",
+  "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03/world",
+  "world_tree_sha256": "5257fd136d34e6fcf0af52cc41d25f562c8e5fd9c695b12b49ed740ba13a42f3",
+  "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+  "dense_score": {
+   "params": {
+    "h": 0.02,
+    "panel_dz": 0.005,
+    "panel_x0": 0.0,
+    "panel_y_end": 0.35
+   },
+   "static_iou": 0.7035,
+   "roi_iou_mean": 0.8956,
+   "roi_iou_rear16": 0.9267,
+   "roi_iou_acc23": 0.8801,
+   "dcy_abs_max": 2.74,
+   "stall_err_max": 3,
+   "loss": 0.6097
+  }
+ },
+ "reference_models": {
+  "v21c07": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07",
+  "v8": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00"
+ },
+ "planning_world": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/bowl_support_dev_v1/world11": "37c41e83375b75b762d0c1b05b172e80d0d852918c4ccc7a898254c32955f668"
+ },
+ "grid_mm": {
+  "acc24_x+060_y-040": [
+   60,
+   -40
+  ],
+  "acc24_x+060_y+040": [
+   60,
+   40
+  ],
+  "acc24_x+080_y-040": [
+   80,
+   -40
+  ],
+  "acc24_x+080_y+040": [
+   80,
+   40
+  ],
+  "acc24_x+100_y-040": [
+   100,
+   -40
+  ],
+  "acc24_x+100_y+040": [
+   100,
+   40
+  ]
+ },
+ "previously_used_positions_mm": [
+  [
+   -80,
+   -80
+  ],
+  [
+   -80,
+   0
+  ],
+  [
+   -80,
+   80
+  ],
+  [
+   0,
+   -80
+  ],
+  [
+   0,
+   0
+  ],
+  [
+   0,
+   80
+  ],
+  [
+   80,
+   -80
+  ],
+  [
+   80,
+   0
+  ],
+  [
+   80,
+   80
+  ],
+  [
+   40,
+   -80
+  ],
+  [
+   40,
+   0
+  ],
+  [
+   40,
+   80
+  ],
+  [
+   120,
+   -80
+  ],
+  [
+   120,
+   0
+  ],
+  [
+   120,
+   80
+  ]
+ ],
+ "rule": {
+  "tol_steps": 5,
+  "tol_cm": 2.0,
+  "min_valid": 4,
+  "set": "ACCEPT iff >= min_valid valid and all valid pass"
+ },
+ "inputs": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/natural_states_all_dev_v1/libero_goal_t0_i0/state.json": "14b7c833b73b4373f171e456b982a99cb77f3275b95b47a853f6e73e5a838e8b",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/robot_rgb_all_dev_v2/libero_goal_t0_i0/robot.json": "219a0d84253b12951bb12ed9f8ac4a9b83939c237ea7548ce7e9b74a259d8cc0",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_dense_score_v23/score.json": "32d5c9adece262517f6d47208e44cd97c1333286abd0209474bcb6624318c793",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03/result.json": "f3d5b1bac2e7d6566a29752c5a43e1711ac5a6fcaed57f397c9930415b1e7897",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/result.json": "816272d91f3a08ae55f4d3c0df8843434511ee61489e7fbc9ce5af86d7b2a9cf",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/result.json": "3b2eb13603653c405539dcec0ce4dd51f5b8ad8cd7997cf21f96521647086173"
+ },
+ "script_sha256": "c4f4b3036d8469760db7f898a7bec73f50a59f5908b4c35aea19c1cbea2b27c9",
+ "selection_notes": {
+  "front_row_x-080": "v12-objective responses of v23c03 equal/above v21c07 (y-080 .8493 vs .8492, y+000/.y+080 identical); no regression",
+  "static_iou_drop": "v23c03 .7035 vs v21c07 .7046 (-.0011)",
+  "y+080_edge_residual": "settled dcy ~-2.2..-2.7 px in all models incl. v8; recorded separately, not a rear-repair target",
+  "dz_tradeoff": "larger panel_dz improves x+040 rows but degrades x+120 rows; dz .005 minimises loss"
+ },
+ "GT_inputs": false,
+ "Target_queries_executed": 0,
+ "data_roles": "fit evidence so far: 9 v3 positions + dense rear v16 + 6 v22 positions (Target first contact seen at v22, dense RGB v23 used for v23 selection). These 6 v24 positions are acceptance-only until their Target result is seen; afterwards they become fit evidence"
+}

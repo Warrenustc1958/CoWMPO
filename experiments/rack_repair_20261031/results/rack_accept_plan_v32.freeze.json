@@ -1,0 +1,228 @@
+{
+ "frozen_model": {
+  "result": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_rib_dev_v31/cand18/result.json",
+  "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_rib_dev_v31/cand18/world",
+  "world_tree_sha256": "d06f10ab00e3f3327a26c43fa35adbda37905cdbec94bfade9fabd7467638c74",
+  "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+  "transition_score": {
+   "params": {
+    "rib_cx": 0.035,
+    "rib_hw": 0.01,
+    "rib_dz": 0.05,
+    "rib_ye": -0.035,
+    "halftop_xb": 0.085
+   },
+   "trans_err": 1.115,
+   "err_max": 2,
+   "n_valid": 26,
+   "excluded": [
+    "acc26_x+070_y-060"
+   ],
+   "static_iou": 0.6742,
+   "front_robot_iou": 0.9111,
+   "dense_loss": 0.7287,
+   "guard_ok": true
+  }
+ },
+ "reference_models": {
+  "v29c10": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10",
+  "v25c01": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01",
+  "v23c03": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03",
+  "v21c07": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07",
+  "v8": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00"
+ },
+ "planning_world": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/bowl_support_dev_v1/world11": "37c41e83375b75b762d0c1b05b172e80d0d852918c4ccc7a898254c32955f668"
+ },
+ "grid_mm": {
+  "acc32_x+040_y-060": [
+   40,
+   -60
+  ],
+  "acc32_x+060_y-060": [
+   60,
+   -60
+  ],
+  "acc32_x+110_y-060": [
+   110,
+   -60
+  ],
+  "acc32_x+050_y-040": [
+   50,
+   -40
+  ],
+  "acc32_x+090_y-040": [
+   90,
+   -40
+  ],
+  "acc32_x+070_y+040": [
+   70,
+   40
+  ]
+ },
+ "previously_used_positions_mm": [
+  [
+   -80,
+   -80
+  ],
+  [
+   -80,
+   0
+  ],
+  [
+   -80,
+   80
+  ],
+  [
+   0,
+   -80
+  ],
+  [
+   0,
+   0
+  ],
+  [
+   0,
+   80
+  ],
+  [
+   80,
+   -80
+  ],
+  [
+   80,
+   0
+  ],
+  [
+   80,
+   80
+  ],
+  [
+   40,
+   -80
+  ],
+  [
+   40,
+   0
+  ],
+  [
+   40,
+   80
+  ],
+  [
+   120,
+   -80
+  ],
+  [
+   120,
+   0
+  ],
+  [
+   120,
+   80
+  ],
+  [
+   60,
+   -40
+  ],
+  [
+   60,
+   40
+  ],
+  [
+   80,
+   -40
+  ],
+  [
+   80,
+   40
+  ],
+  [
+   100,
+   -40
+  ],
+  [
+   100,
+   40
+  ],
+  [
+   20,
+   -40
+  ],
+  [
+   20,
+   40
+  ],
+  [
+   110,
+   -40
+  ],
+  [
+   110,
+   40
+  ],
+  [
+   70,
+   -60
+  ],
+  [
+   90,
+   -60
+  ],
+  [
+   30,
+   -20
+  ],
+  [
+   30,
+   20
+  ],
+  [
+   130,
+   -20
+  ],
+  [
+   130,
+   20
+  ],
+  [
+   50,
+   -60
+  ],
+  [
+   100,
+   -20
+  ]
+ ],
+ "rule": {
+  "tol_steps": 5,
+  "tol_cm": 2.0,
+  "min_valid": 4,
+  "set": "ACCEPT iff >= min_valid valid and all valid pass"
+ },
+ "inputs": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/natural_states_all_dev_v1/libero_goal_t0_i0/state.json": "14b7c833b73b4373f171e456b982a99cb77f3275b95b47a853f6e73e5a838e8b",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/robot_rgb_all_dev_v2/libero_goal_t0_i0/robot.json": "219a0d84253b12951bb12ed9f8ac4a9b83939c237ea7548ce7e9b74a259d8cc0",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_transition_score_v31/score.json": "0da6bf07e11dea3c6d2ecebcef290563028062d7d1c5e788cb949bd4e640f2fb",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_rib_dev_v31/cand18/result.json": "2cec4128dfe0584c2efbbbe1c875d541aecf3b4b115bc6f625ac5f130f60d126",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10/result.json": "4b92addc2a1b91823be1e920802010f3893628042f376a367e14e3fe93336e37",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01/result.json": "bf9c39749bb3cd3961ad2ba5ca4a4f4ab5022b2e651674ad3a624e9e253a9156",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03/result.json": "f3d5b1bac2e7d6566a29752c5a43e1711ac5a6fcaed57f397c9930415b1e7897",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/result.json": "816272d91f3a08ae55f4d3c0df8843434511ee61489e7fbc9ce5af86d7b2a9cf",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/result.json": "3b2eb13603653c405539dcec0ce4dd51f5b8ad8cd7997cf21f96521647086173"
+ },
+ "script_sha256": "f9acec2ace091959f2796da4045d619846f584f12137778483c42283503a7227",
+ "selection_notes": {
+  "family": "v29 cand10 + narrow -y rib (cx .035, half-width .01, top H+.05, -y edge to y -.035) + half-top plate back edge cut to x .085 (v31)",
+  "selection": "transition-level public signal (deceleration onset dec0.5, same rule on public RGB and model robot mask; WorldCoder/GIF-MCTS-style transition fitting) with guardrails vs v29c10",
+  "trans_err": "1.115 (max 2 steps) vs v29c10 1.462 (max 6); x+050_y-060 4->2, x+060_y-040 4->2, x+120_y-080 6->2",
+  "static_iou_drop": "v31c18 .6742 vs v29c10 .6810 (-.0068) / v23c03 .7035",
+  "front_row_v12": ".9111 vs v29c10 .9099; no regression",
+  "dense_roi_loss": ".7287 vs v29c10 .7534 (27 probes)",
+  "excluded_probe": "acc26_x+070_y-060 (no blocked moment, slides off the -y edge); rule fixed before scoring",
+  "y+edge_residual": "recorded separately, not a repair target"
+ },
+ "GT_inputs": false,
+ "Target_queries_executed": 0,
+ "data_roles": "fit evidence so far: 9 v3 positions + dense rear v16 + v22 (dense v23) + v24 (dense v25) + v26 (dense v27) positions; Target first contact seen for v22/v24/v26; the v27-v31 families were informed by the v24/v26 -y outcome. These 6 v32 positions are acceptance-only until their Target result is seen; afterwards they become fit evidence"
+}

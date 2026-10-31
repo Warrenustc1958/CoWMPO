@@ -1,0 +1,61 @@
+{
+ "index": 18,
+ "rib_cx": 0.035,
+ "rib_hw": 0.01,
+ "rib_dz": 0.05,
+ "rib_ye": -0.035,
+ "halftop_xb": 0.085,
+ "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_rib_dev_v31/cand18/world",
+ "world_tree_sha256": "d06f10ab00e3f3327a26c43fa35adbda37905cdbec94bfade9fabd7467638c74",
+ "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+ "static_iou": 0.674218083119298,
+ "robot_iou": 0.9110520098463333,
+ "responses": [
+  {
+   "key": "yp_h220_-060",
+   "group": "horizontal",
+   "mean_iou": 0.8677411735815782
+  },
+  {
+   "key": "vert_x-080_y+080",
+   "group": "vertical",
+   "mean_iou": 0.8886485881219659
+  },
+  {
+   "key": "vert_x+000_y+000",
+   "group": "vertical",
+   "mean_iou": 0.9222307125593725
+  },
+  {
+   "key": "vert_x+000_y+080",
+   "group": "vertical",
+   "mean_iou": 0.8930992665823618
+  },
+  {
+   "key": "vert_x-080_y-080",
+   "group": "vertical_v11",
+   "mean_iou": 0.8597222492766725
+  },
+  {
+   "key": "vert_x-080_y+000",
+   "group": "vertical_v11",
+   "mean_iou": 0.9110055243147112
+  },
+  {
+   "key": "vert_x+080_y-080",
+   "group": "vertical_v11",
+   "mean_iou": 0.960882963978282
+  },
+  {
+   "key": "vert_x+080_y+000",
+   "group": "vertical_v11",
+   "mean_iou": 0.9696507433623844
+  },
+  {
+   "key": "vert_x+080_y+080",
+   "group": "vertical_v11",
+   "mean_iou": 0.926486866839671
+  }
+ ],
+ "loss": 0.5926258873417022
+}

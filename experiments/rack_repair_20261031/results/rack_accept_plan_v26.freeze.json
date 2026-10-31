@@ -1,0 +1,177 @@
+{
+ "frozen_model": {
+  "result": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01/result.json",
+  "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01/world",
+  "world_tree_sha256": "f84a6a9b14351f360febe809708f6cb6586425641879e003d836a934ab817ead",
+  "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+  "dense_score": {
+   "params": {
+    "h": 0.02,
+    "panel_dz": 0.005,
+    "side_hf": 0.02,
+    "side_hb": 0.005,
+    "side_ye": 0.05
+   },
+   "static_iou": 0.6987,
+   "roi_iou_mean": 0.8781,
+   "roi_iou_rear16": 0.9267,
+   "roi_iou_acc23": 0.9039,
+   "roi_iou_acc25": 0.8279,
+   "stall_err_acc25_neg_y": [
+    4,
+    0,
+    5
+   ],
+   "dcy_abs_max": 3.48,
+   "stall_err_max": 6,
+   "loss": 0.667
+  }
+ },
+ "reference_models": {
+  "v23c03": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03",
+  "v21c07": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07",
+  "v8": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00"
+ },
+ "planning_world": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/bowl_support_dev_v1/world11": "37c41e83375b75b762d0c1b05b172e80d0d852918c4ccc7a898254c32955f668"
+ },
+ "grid_mm": {
+  "acc26_x+020_y-040": [
+   20,
+   -40
+  ],
+  "acc26_x+020_y+040": [
+   20,
+   40
+  ],
+  "acc26_x+110_y-040": [
+   110,
+   -40
+  ],
+  "acc26_x+110_y+040": [
+   110,
+   40
+  ],
+  "acc26_x+070_y-060": [
+   70,
+   -60
+  ],
+  "acc26_x+090_y-060": [
+   90,
+   -60
+  ]
+ },
+ "previously_used_positions_mm": [
+  [
+   -80,
+   -80
+  ],
+  [
+   -80,
+   0
+  ],
+  [
+   -80,
+   80
+  ],
+  [
+   0,
+   -80
+  ],
+  [
+   0,
+   0
+  ],
+  [
+   0,
+   80
+  ],
+  [
+   80,
+   -80
+  ],
+  [
+   80,
+   0
+  ],
+  [
+   80,
+   80
+  ],
+  [
+   40,
+   -80
+  ],
+  [
+   40,
+   0
+  ],
+  [
+   40,
+   80
+  ],
+  [
+   120,
+   -80
+  ],
+  [
+   120,
+   0
+  ],
+  [
+   120,
+   80
+  ],
+  [
+   60,
+   -40
+  ],
+  [
+   60,
+   40
+  ],
+  [
+   80,
+   -40
+  ],
+  [
+   80,
+   40
+  ],
+  [
+   100,
+   -40
+  ],
+  [
+   100,
+   40
+  ]
+ ],
+ "rule": {
+  "tol_steps": 5,
+  "tol_cm": 2.0,
+  "min_valid": 4,
+  "set": "ACCEPT iff >= min_valid valid and all valid pass"
+ },
+ "inputs": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/natural_states_all_dev_v1/libero_goal_t0_i0/state.json": "14b7c833b73b4373f171e456b982a99cb77f3275b95b47a853f6e73e5a838e8b",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/robot_rgb_all_dev_v2/libero_goal_t0_i0/robot.json": "219a0d84253b12951bb12ed9f8ac4a9b83939c237ea7548ce7e9b74a259d8cc0",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_dense_score_v25/score.json": "16b7974fa07dab63de0e34e5577502ead36171567abd799d62ab4b761b5acf27",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01/result.json": "bf9c39749bb3cd3961ad2ba5ca4a4f4ab5022b2e651674ad3a624e9e253a9156",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03/result.json": "f3d5b1bac2e7d6566a29752c5a43e1711ac5a6fcaed57f397c9930415b1e7897",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/result.json": "816272d91f3a08ae55f4d3c0df8843434511ee61489e7fbc9ce5af86d7b2a9cf",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/result.json": "3b2eb13603653c405539dcec0ce4dd51f5b8ad8cd7997cf21f96521647086173"
+ },
+ "script_sha256": "acc4b5362fd2e32d2f6e7d870fb36e352495a4b01738be226f6c7f6c5d06e8f6",
+ "selection_notes": {
+  "loss": "v25c01 .667 vs v23c03 .701 / v21c07 .837 / v12 .963 (15 public probes)",
+  "static_iou_drop": "v25c01 .6987 vs v23c03 .7035 (-.0048) vs v21c07 .7046",
+  "front_row_x-080": "v12-objective responses v25c01 vs v23c03: y-080 .8496 vs .8493, y+000/y+080 identical; no regression",
+  "y+edge_residual": "all +y probes identical to v23c03 (settled dcy -2.2..-3.5 px); recorded separately, not a repair target",
+  "weak_spot": "acc24_x+060_y-040 still worst fit: ROI IoU .639->.670, stall_err 1->4",
+  "family_tradeoff": "board front >= 3.5 cm regresses rear16 and the v12 front row; 2 cm is the only safe height"
+ },
+ "GT_inputs": false,
+ "Target_queries_executed": 0,
+ "data_roles": "fit evidence so far: 9 v3 positions + dense rear v16 + 6 v22 positions (dense RGB v23) + 6 v24 positions (Target first contact seen at v24; dense RGB v25 used for v25 selection; the v25 family design was informed by the v24 -y outcome). These 6 v26 positions are acceptance-only until their Target result is seen; afterwards they become fit evidence"
+}

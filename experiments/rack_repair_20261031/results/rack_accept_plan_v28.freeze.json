@@ -1,0 +1,209 @@
+{
+ "frozen_model": {
+  "result": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10/result.json",
+  "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10/world",
+  "world_tree_sha256": "5d633c14bc4a84c7c93f0d3bb52585fa43f218477ada8b234a5d8a44a3c17663",
+  "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+  "dense_score": {
+   "params": {
+    "panel_dz": 0.005,
+    "halftop_dz": 0.03,
+    "halftop_xf": 0.0,
+    "halftop_ye": -0.1
+   },
+   "static_iou": 0.681,
+   "roi_iou_mean": 0.8691,
+   "roi_iou_rear16": 0.9213,
+   "roi_iou_acc23": 0.8716,
+   "roi_iou_acc25": 0.8579,
+   "roi_iou_acc27": 0.8516,
+   "roi_iou_neg_y_all": 0.8511,
+   "stall_err_acc27_neg_y": [
+    0,
+    28,
+    19,
+    0
+   ],
+   "dcy_abs_max": 5.78,
+   "stall_err_max": 28,
+   "loss": 0.7117,
+   "loss_ex_ym060": 0.6738
+  }
+ },
+ "reference_models": {
+  "v25c01": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01",
+  "v23c03": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03",
+  "v21c07": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07",
+  "v8": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00"
+ },
+ "planning_world": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/bowl_support_dev_v1/world11": "37c41e83375b75b762d0c1b05b172e80d0d852918c4ccc7a898254c32955f668"
+ },
+ "grid_mm": {
+  "acc28_x+030_y-020": [
+   30,
+   -20
+  ],
+  "acc28_x+030_y+020": [
+   30,
+   20
+  ],
+  "acc28_x+130_y-020": [
+   130,
+   -20
+  ],
+  "acc28_x+130_y+020": [
+   130,
+   20
+  ],
+  "acc28_x+050_y-060": [
+   50,
+   -60
+  ],
+  "acc28_x+100_y-020": [
+   100,
+   -20
+  ]
+ },
+ "previously_used_positions_mm": [
+  [
+   -80,
+   -80
+  ],
+  [
+   -80,
+   0
+  ],
+  [
+   -80,
+   80
+  ],
+  [
+   0,
+   -80
+  ],
+  [
+   0,
+   0
+  ],
+  [
+   0,
+   80
+  ],
+  [
+   80,
+   -80
+  ],
+  [
+   80,
+   0
+  ],
+  [
+   80,
+   80
+  ],
+  [
+   40,
+   -80
+  ],
+  [
+   40,
+   0
+  ],
+  [
+   40,
+   80
+  ],
+  [
+   120,
+   -80
+  ],
+  [
+   120,
+   0
+  ],
+  [
+   120,
+   80
+  ],
+  [
+   60,
+   -40
+  ],
+  [
+   60,
+   40
+  ],
+  [
+   80,
+   -40
+  ],
+  [
+   80,
+   40
+  ],
+  [
+   100,
+   -40
+  ],
+  [
+   100,
+   40
+  ],
+  [
+   20,
+   -40
+  ],
+  [
+   20,
+   40
+  ],
+  [
+   110,
+   -40
+  ],
+  [
+   110,
+   40
+  ],
+  [
+   70,
+   -60
+  ],
+  [
+   90,
+   -60
+  ]
+ ],
+ "rule": {
+  "tol_steps": 5,
+  "tol_cm": 2.0,
+  "min_valid": 4,
+  "set": "ACCEPT iff >= min_valid valid and all valid pass"
+ },
+ "inputs": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/natural_states_all_dev_v1/libero_goal_t0_i0/state.json": "14b7c833b73b4373f171e456b982a99cb77f3275b95b47a853f6e73e5a838e8b",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/robot_rgb_all_dev_v2/libero_goal_t0_i0/robot.json": "219a0d84253b12951bb12ed9f8ac4a9b83939c237ea7548ce7e9b74a259d8cc0",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_dense_score_v29/score.json": "8e84aca4a19862308158b85ee45dea9eb25569e3203b1151c83c9ca5ad3a52ae",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10/result.json": "4b92addc2a1b91823be1e920802010f3893628042f376a367e14e3fe93336e37",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01/result.json": "bf9c39749bb3cd3961ad2ba5ca4a4f4ab5022b2e651674ad3a624e9e253a9156",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03/result.json": "f3d5b1bac2e7d6566a29752c5a43e1711ac5a6fcaed57f397c9930415b1e7897",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/result.json": "816272d91f3a08ae55f4d3c0df8843434511ee61489e7fbc9ce5af86d7b2a9cf",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/result.json": "3b2eb13603653c405539dcec0ce4dd51f5b8ad8cd7997cf21f96521647086173"
+ },
+ "script_sha256": "082d50fdd67c1cc50de64b08f91c2d98e984602b8afb77b32bfc6f1f176fe01f",
+ "selection_notes": {
+  "family": "v23 cand03 + flat -y half-top plate dz .03, xf 0, ye -.10 W; no rotation/shift (v29)",
+  "loss": "v29c10 .7117 vs v25c01 .7285 / v23c03 .7537 / v21c07 .8831 / v12 .9803 (21 public probes); same top without the two y-060 slide-off probes (.6738)",
+  "neg_y_iou": "mean ROI IoU on -y probes .851 vs v25c01 .819 / v23c03 .805; acc27 .852 vs .806",
+  "static_iou_drop": "v29c10 .6810 vs v23c03 .7035 (-.0225) / v25c01 .6987",
+  "front_row_x-080": "v12-objective responses v29c10 vs v23c03: y-080 .8555 vs .8493, y+000/y+080 identical; no regression",
+  "rear16": ".921 vs .927 (v23c03/v25c01)",
+  "y+edge_residual": "recorded separately, not a repair target",
+  "y-060_probes": "diag_rack_ym060_v28: real slide-off the -y outer edge; ROI IoU kept, stall/dcy not used",
+  "tracker_lag": "v7b masks lag ROI entry by ~3-8 steps on every probe (common to all models)"
+ },
+ "GT_inputs": false,
+ "Target_queries_executed": 0,
+ "data_roles": "fit evidence so far: 9 v3 positions + dense rear v16 + v22 (dense v23) + v24 (dense v25) + v26 (dense v27) positions; Target first contact seen for v22/v24/v26; the v27/v27b/v29 families were informed by the v24/v26 -y outcome. These 6 v28 positions are acceptance-only until their Target result is seen; afterwards they become fit evidence"
+}

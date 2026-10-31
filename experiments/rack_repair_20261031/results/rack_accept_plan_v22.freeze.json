@@ -1,0 +1,82 @@
+{
+ "frozen_model": {
+  "result": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/result.json",
+  "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/world",
+  "world_tree_sha256": "39a533c1cb7f5cf5d86323cdccf4e61b523903d066e3ce4646516306c0da3b5a",
+  "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+  "dense_score": {
+   "params": {
+    "h": 0.02,
+    "h_pos": 0.0,
+    "b": 0.008,
+    "bar_y": 0.0,
+    "post_y": 0.45,
+    "bar_end_pos": 0.0,
+    "post_y_pos": 0.25
+   },
+   "static_iou": 0.7046,
+   "roi_iou_mean": 0.9267,
+   "dcy_abs_max": 2.23,
+   "stall_err_max": 1,
+   "loss": 0.5153
+  }
+ },
+ "reference_model": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00",
+ "planning_world": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/bowl_support_dev_v1/world11": "37c41e83375b75b762d0c1b05b172e80d0d852918c4ccc7a898254c32955f668"
+ },
+ "grid_mm": {
+  "acc_x+040_y-080": [
+   40,
+   -80
+  ],
+  "acc_x+040_y+000": [
+   40,
+   0
+  ],
+  "acc_x+040_y+080": [
+   40,
+   80
+  ],
+  "acc_x+120_y-080": [
+   120,
+   -80
+  ],
+  "acc_x+120_y+000": [
+   120,
+   0
+  ],
+  "acc_x+120_y+080": [
+   120,
+   80
+  ]
+ },
+ "previously_used_positions": [
+  "vert_x-080_y-080",
+  "vert_x-080_y+000",
+  "vert_x-080_y+080",
+  "vert_x+000_y-080",
+  "vert_x+000_y+000",
+  "vert_x+000_y+080",
+  "vert_x+080_y-080",
+  "vert_x+080_y+000",
+  "vert_x+080_y+080"
+ ],
+ "rule": {
+  "tol_steps": 5,
+  "tol_cm": 2.0,
+  "min_valid": 4,
+  "set": "ACCEPT iff >= min_valid valid and all valid pass"
+ },
+ "inputs": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/natural_states_all_dev_v1/libero_goal_t0_i0/state.json": "14b7c833b73b4373f171e456b982a99cb77f3275b95b47a853f6e73e5a838e8b",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/robot_rgb_all_dev_v2/libero_goal_t0_i0/robot.json": "219a0d84253b12951bb12ed9f8ac4a9b83939c237ea7548ce7e9b74a259d8cc0",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_dense_score_v16/score.json": "c673a680f1f2e462d073656ab6db5d0d0ae0c7e6de712d33f8dfec419504624b",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/result.json": "816272d91f3a08ae55f4d3c0df8843434511ee61489e7fbc9ce5af86d7b2a9cf",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/result.json": "3b2eb13603653c405539dcec0ce4dd51f5b8ad8cd7997cf21f96521647086173"
+ },
+ "script_sha256": "ee3b14f6274e8bf309a6f51e14833d64c24718545a7b3f43608d654b5216118e",
+ "GT_inputs": false,
+ "Target_queries_executed": 0,
+ "data_roles": "fit evidence so far: 9 v3 positions (4 original + 5 v11) incl. dense rear v16; these 6 positions are acceptance-only until their Target result is seen, then they become fit evidence"
+}
