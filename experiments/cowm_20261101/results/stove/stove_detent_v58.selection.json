@@ -1,0 +1,509 @@
+{
+ "top": [
+  {
+   "cand": "d58_067",
+   "frictionloss": 0.12472637475302617,
+   "shape": "box L0.008 W0.005 th-0.35",
+   "k_off": 0.6927251711126454,
+   "s_up": 0.3250069999778678,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 3.328415769283086,
+   "damping": 0.05991178755367527,
+   "thr": 0.575,
+   "final": 10,
+   "max_err": 5,
+   "frame_err": 7,
+   "eligible": true
+  },
+  {
+   "cand": "d58_013",
+   "frictionloss": 0.13689146172964337,
+   "shape": "box L0.010 W0.004 th-0.39",
+   "k_off": 0.5800218827111532,
+   "s_up": 0.3204419818791248,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.6680950202618297,
+   "damping": 0.05819851288045255,
+   "thr": 0.55,
+   "final": 10,
+   "max_err": 6,
+   "frame_err": 5,
+   "eligible": true
+  },
+  {
+   "cand": "d58_067",
+   "frictionloss": 0.12472637475302617,
+   "shape": "box L0.008 W0.005 th-0.35",
+   "k_off": 0.6927251711126454,
+   "s_up": 0.3250069999778678,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 3.328415769283086,
+   "damping": 0.05991178755367527,
+   "thr": 0.55,
+   "final": 10,
+   "max_err": 6,
+   "frame_err": 5,
+   "eligible": true
+  },
+  {
+   "cand": "d58_071",
+   "frictionloss": 0.14575046593837543,
+   "shape": "box L0.008 W0.006 th-0.28",
+   "k_off": 0.7080265227212837,
+   "s_up": 0.261092346013435,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.1844683824098188,
+   "damping": 0.04298450330086258,
+   "thr": 0.525,
+   "final": 10,
+   "max_err": 6,
+   "frame_err": 6,
+   "eligible": true
+  },
+  {
+   "cand": "d58_013",
+   "frictionloss": 0.13689146172964337,
+   "shape": "box L0.010 W0.004 th-0.39",
+   "k_off": 0.5800218827111532,
+   "s_up": 0.3204419818791248,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.6680950202618297,
+   "damping": 0.05819851288045255,
+   "thr": 0.525,
+   "final": 10,
+   "max_err": 6,
+   "frame_err": 7,
+   "eligible": true
+  },
+  {
+   "cand": "d58_025",
+   "frictionloss": 0.1595419550692105,
+   "shape": "box L0.010 W0.004 th-0.26",
+   "k_off": 0.792541160801549,
+   "s_up": 0.2763216087635844,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.045926010823825,
+   "damping": 0.025449623311181054,
+   "thr": 0.525,
+   "final": 10,
+   "max_err": 7,
+   "frame_err": 5,
+   "eligible": true
+  },
+  {
+   "cand": "d58_111",
+   "frictionloss": 0.1078319028308387,
+   "shape": "box L0.008 W0.004 th-0.39",
+   "k_off": 0.6284729710356017,
+   "s_up": 0.2518896332235285,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 3.388107705748287,
+   "damping": 0.005338484038909829,
+   "thr": 0.55,
+   "final": 10,
+   "max_err": 7,
+   "frame_err": 8,
+   "eligible": true
+  },
+  {
+   "cand": "d58_007",
+   "frictionloss": 0.1552552375826511,
+   "shape": "box L0.012 W0.004 th-0.20",
+   "k_off": 0.7396556065588795,
+   "s_up": 0.249026121996347,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.3228531467498144,
+   "damping": 0.05844961864813374,
+   "thr": 0.5,
+   "final": 10,
+   "max_err": 7,
+   "frame_err": 9,
+   "eligible": true
+  },
+  {
+   "cand": "d58_064",
+   "frictionloss": 0.13970208983146842,
+   "shape": "box L0.012 W0.004 th-0.39",
+   "k_off": 0.7090579514091797,
+   "s_up": 0.3156998705646579,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.1087298187488916,
+   "damping": 0.021126494886011364,
+   "thr": 0.575,
+   "final": 10,
+   "max_err": 7,
+   "frame_err": 13,
+   "eligible": true
+  },
+  {
+   "cand": "d58_045",
+   "frictionloss": 0.13551382247938357,
+   "shape": "box L0.008 W0.005 th-0.28",
+   "k_off": 0.43347885075842824,
+   "s_up": 0.3306853084895924,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.64373913504724,
+   "damping": 0.02267694401213175,
+   "thr": 0.55,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 6,
+   "eligible": true
+  },
+  {
+   "cand": "d58_063",
+   "frictionloss": 0.10345778227194878,
+   "shape": "box L0.009 W0.004 th-0.28",
+   "k_off": 0.6195078808305703,
+   "s_up": 0.2969214636098188,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.938218395234114,
+   "damping": 0.013283145270916563,
+   "thr": 0.525,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 6,
+   "eligible": true
+  },
+  {
+   "cand": "d58_007",
+   "frictionloss": 0.1552552375826511,
+   "shape": "box L0.012 W0.004 th-0.20",
+   "k_off": 0.7396556065588795,
+   "s_up": 0.249026121996347,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.3228531467498144,
+   "damping": 0.05844961864813374,
+   "thr": 0.475,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 7,
+   "eligible": true
+  },
+  {
+   "cand": "d58_041",
+   "frictionloss": 0.10159086972811164,
+   "shape": "box L0.011 W0.005 th-0.23",
+   "k_off": 0.5826817510394685,
+   "s_up": 0.3281284106351293,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.4531152833747882,
+   "damping": 0.05815517785518467,
+   "thr": 0.525,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 8,
+   "eligible": true
+  },
+  {
+   "cand": "d58_041",
+   "frictionloss": 0.10159086972811164,
+   "shape": "box L0.011 W0.005 th-0.23",
+   "k_off": 0.5826817510394685,
+   "s_up": 0.3281284106351293,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.4531152833747882,
+   "damping": 0.05815517785518467,
+   "thr": 0.5,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 9,
+   "eligible": true
+  },
+  {
+   "cand": "d58_102",
+   "frictionloss": 0.14280749746601737,
+   "shape": "box L0.008 W0.004 th-0.38",
+   "k_off": 0.4364288912548207,
+   "s_up": 0.29438588991213244,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.02986382979129,
+   "damping": 0.017766677006818242,
+   "thr": 0.5,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 9,
+   "eligible": true
+  },
+  {
+   "cand": "d58_000",
+   "frictionloss": 0.124,
+   "shape": "box L0.011 W0.005 th-0.31",
+   "k_off": 0.613,
+   "s_up": 0.335,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 3.0,
+   "damping": 0.02,
+   "thr": 0.575,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 10,
+   "eligible": true
+  },
+  {
+   "cand": "d58_064",
+   "frictionloss": 0.13970208983146842,
+   "shape": "box L0.012 W0.004 th-0.39",
+   "k_off": 0.7090579514091797,
+   "s_up": 0.3156998705646579,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.1087298187488916,
+   "damping": 0.021126494886011364,
+   "thr": 0.55,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 10,
+   "eligible": true
+  },
+  {
+   "cand": "d58_057",
+   "frictionloss": 0.12832744151523223,
+   "shape": "box L0.012 W0.004 th-0.28",
+   "k_off": 0.6208996920771191,
+   "s_up": 0.34863707295956253,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.757317313819814,
+   "damping": 0.0396396019758132,
+   "thr": 0.575,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 11,
+   "eligible": true
+  },
+  {
+   "cand": "d58_090",
+   "frictionloss": 0.1414553796391109,
+   "shape": "box L0.014 W0.005 th-0.24",
+   "k_off": 0.5777681870625113,
+   "s_up": 0.31521234651338415,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.102265498198097,
+   "damping": 0.016499248611928013,
+   "thr": 0.575,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 14,
+   "eligible": true
+  },
+  {
+   "cand": "d58_076",
+   "frictionloss": 0.1331624437091542,
+   "shape": "box L0.014 W0.004 th-0.27",
+   "k_off": 0.7155419165269155,
+   "s_up": 0.32844520881477784,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 2.2740092883410927,
+   "damping": 0.01896888343658147,
+   "thr": 0.6,
+   "final": 10,
+   "max_err": 8,
+   "frame_err": 17,
+   "eligible": true
+  }
+ ],
+ "best_rows": [
+  {
+   "key": "policy_libero_goal_t7_i0",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 5
+  },
+  {
+   "key": "policy_libero_goal_t7_i1",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 0
+  },
+  {
+   "key": "policy_libero_goal_t7_i2",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 1
+  },
+  {
+   "key": "old_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "old_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "new_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "new_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "fit_libero_goal_t7_i3",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 1
+  },
+  {
+   "key": "fit_libero_goal_t7_i4",
+   "final_correct": true,
+   "error": 3,
+   "frame_errors": 0
+  },
+  {
+   "key": "fit_libero_goal_t7_i5",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 0
+  }
+ ],
+ "loo": [
+  {
+   "held_out": "fit_libero_goal_t7_i3",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "fit_libero_goal_t7_i3",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "fit_libero_goal_t7_i4",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "fit_libero_goal_t7_i4",
+   "final_correct": true,
+   "error": 3,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "fit_libero_goal_t7_i5",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "fit_libero_goal_t7_i5",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "new_libero_goal_t0_i0",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "new_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "new_libero_goal_t5_i0",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "new_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "old_libero_goal_t0_i0",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "old_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "old_libero_goal_t5_i0",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "old_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i0",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "policy_libero_goal_t7_i0",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 5
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i1",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "policy_libero_goal_t7_i1",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i2",
+   "chosen": [
+    "d58_067",
+    0.575
+   ],
+   "key": "policy_libero_goal_t7_i2",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 1
+  }
+ ],
+ "loo_final_correct": 10,
+ "loo_onset_errors": [
+  5,
+  3,
+  2,
+  1,
+  1,
+  5
+ ],
+ "n_eligible": 21,
+ "GT_inputs": false
+}

@@ -1,0 +1,928 @@
+{
+ "top": [
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.525,
+   "final": 31,
+   "max_err": 31,
+   "frame_err": 120,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.5,
+   "final": 31,
+   "max_err": 31,
+   "frame_err": 123,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.55,
+   "final": 31,
+   "max_err": 31,
+   "frame_err": 123,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.45,
+   "final": 31,
+   "max_err": 32,
+   "frame_err": 121,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.475,
+   "final": 31,
+   "max_err": 32,
+   "frame_err": 122,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.425,
+   "final": 31,
+   "max_err": 32,
+   "frame_err": 125,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.4,
+   "final": 31,
+   "max_err": 33,
+   "frame_err": 130,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.375,
+   "final": 31,
+   "max_err": 35,
+   "frame_err": 138,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.35,
+   "final": 31,
+   "max_err": 37,
+   "frame_err": 148,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.325,
+   "final": 31,
+   "max_err": 39,
+   "frame_err": 155,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.3,
+   "final": 31,
+   "max_err": 41,
+   "frame_err": 165,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.575,
+   "final": 31,
+   "max_err": 44,
+   "frame_err": 135,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.275,
+   "final": 31,
+   "max_err": 67,
+   "frame_err": 211,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.25,
+   "final": 31,
+   "max_err": 68,
+   "frame_err": 271,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.225,
+   "final": 31,
+   "max_err": 70,
+   "frame_err": 332,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.2,
+   "final": 31,
+   "max_err": 76,
+   "frame_err": 398,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.175,
+   "final": 31,
+   "max_err": 77,
+   "frame_err": 417,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.15,
+   "final": 31,
+   "max_err": 78,
+   "frame_err": 465,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.125,
+   "final": 31,
+   "max_err": 83,
+   "frame_err": 522,
+   "eligible": false
+  },
+  {
+   "cand": "r2_101",
+   "frictionloss": 0.0765317014357925,
+   "shape": "box L0.004 W0.007 th-0.55",
+   "k_off": 0.9428377418523398,
+   "s_up": 0.2696726667854377,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 0.8424192843198743,
+   "damping": 0.009570006463659426,
+   "thr": 0.1,
+   "final": 31,
+   "max_err": 84,
+   "frame_err": 591,
+   "eligible": false
+  }
+ ],
+ "best_rows": [
+  {
+   "key": "policy_libero_goal_t7_i0",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 2
+  },
+  {
+   "key": "policy_libero_goal_t7_i1",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 1
+  },
+  {
+   "key": "policy_libero_goal_t7_i2",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 1
+  },
+  {
+   "key": "old_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "old_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "new_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "new_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "fit_libero_goal_t7_i3",
+   "final_correct": true,
+   "error": 9,
+   "frame_errors": 2
+  },
+  {
+   "key": "fit_libero_goal_t7_i4",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "key": "fit_libero_goal_t7_i5",
+   "final_correct": true,
+   "error": 3,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist0_m",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist0_p",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 19
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist1_m",
+   "final_correct": true,
+   "error": 25,
+   "frame_errors": 12
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist2_p",
+   "final_correct": true,
+   "error": 13,
+   "frame_errors": 7
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist0_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist2_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist2_p",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist0_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist1_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist2_p",
+   "final_correct": true,
+   "error": 11,
+   "frame_errors": 5
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_m05",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_m20",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 2
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_p05",
+   "final_correct": true,
+   "error": 31,
+   "frame_errors": 15
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_p20",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_m05",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 19
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_m20",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 24
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_p05",
+   "final_correct": true,
+   "error": 7,
+   "frame_errors": 4
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_p20",
+   "final_correct": true,
+   "error": 6,
+   "frame_errors": 3
+  },
+  {
+   "key": "libero_goal_t7_i1__v65_a0_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__v65_a0_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  }
+ ],
+ "loo": [
+  {
+   "held_out": "fit_libero_goal_t7_i3",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "fit_libero_goal_t7_i3",
+   "final_correct": true,
+   "error": 9,
+   "frame_errors": 2
+  },
+  {
+   "held_out": "fit_libero_goal_t7_i4",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "fit_libero_goal_t7_i4",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "fit_libero_goal_t7_i5",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "fit_libero_goal_t7_i5",
+   "final_correct": true,
+   "error": 3,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_m05",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_m05",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_m20",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_m20",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 2
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_p05",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_p05",
+   "final_correct": true,
+   "error": 31,
+   "frame_errors": 15
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_p20",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_p20",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_m05",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_m05",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 19
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_m20",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_m20",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 24
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_p05",
+   "chosen": [
+    "r2_101",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_p05",
+   "final_correct": true,
+   "error": 18,
+   "frame_errors": 9
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_p20",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_p20",
+   "final_correct": true,
+   "error": 6,
+   "frame_errors": 3
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist0_m",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__wrist0_m",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist0_p",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__wrist0_p",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 19
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist1_m",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__wrist1_m",
+   "final_correct": true,
+   "error": 25,
+   "frame_errors": 12
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist2_p",
+   "chosen": [
+    "r2_101",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__wrist2_p",
+   "final_correct": true,
+   "error": 24,
+   "frame_errors": 12
+  },
+  {
+   "held_out": "libero_goal_t7_i1__v65_a0_m20",
+   "chosen": [
+    "r2_100",
+    0.55
+   ],
+   "key": "libero_goal_t7_i1__v65_a0_m20",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 22
+  },
+  {
+   "held_out": "libero_goal_t7_i1__v65_a0_p20",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i1__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist0_m",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i1__wrist0_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist1_p",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i1__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist2_m",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i1__wrist2_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist2_p",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i1__wrist2_p",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "libero_goal_t7_i2__v65_a0_m20",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i2__v65_a0_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__v65_a0_p20",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i2__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist0_p",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i2__wrist0_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist1_m",
+   "chosen": [
+    "r2_116",
+    0.5
+   ],
+   "key": "libero_goal_t7_i2__wrist1_m",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 19
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist1_p",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "libero_goal_t7_i2__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist2_p",
+   "chosen": [
+    "r2_087",
+    0.525
+   ],
+   "key": "libero_goal_t7_i2__wrist2_p",
+   "final_correct": false,
+   "error": 115,
+   "frame_errors": 13
+  },
+  {
+   "held_out": "new_libero_goal_t0_i0",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "new_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "new_libero_goal_t5_i0",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "new_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "old_libero_goal_t0_i0",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "old_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "old_libero_goal_t5_i0",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "old_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i0",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "policy_libero_goal_t7_i0",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 2
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i1",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "policy_libero_goal_t7_i1",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i2",
+   "chosen": [
+    "r2_101",
+    0.525
+   ],
+   "key": "policy_libero_goal_t7_i2",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 1
+  }
+ ],
+ "loo_final_correct": 28,
+ "loo_onset_errors": [
+  9,
+  2,
+  3,
+  2,
+  4,
+  31,
+  2,
+  18,
+  6,
+  1,
+  25,
+  24,
+  2,
+  115,
+  5,
+  1,
+  4
+ ],
+ "n_eligible": 0,
+ "GT_inputs": false
+}

@@ -1,0 +1,630 @@
+{
+ "sdk_version": "cowm-sdk-0.2.1",
+ "program_sha256": "5bf97883c584034d74c6fa8d856b01efc1d022c64fb3e32439c5354c02c89211",
+ "table": {
+  "size": [
+   1.0,
+   1.2,
+   0.05
+  ],
+  "height": 0.9,
+  "friction": [
+   1.0,
+   0.005,
+   0.0001
+  ],
+  "material": "tabletop",
+  "contact_rule": "object_table_pair"
+ },
+ "camera": {
+  "name": "agentview",
+  "rel_pos": [
+   1.318613174683477,
+   0.0,
+   0.6983500240372423
+  ],
+  "rel_quat": [
+   0.6380177212293417,
+   0.30484971880648903,
+   0.3048498380157687,
+   0.6380177212293417
+  ],
+  "fovy": 45.0,
+  "image_size": [
+   256,
+   256
+  ],
+  "image_flip": "rotate 180 deg (img[::-1, ::-1]) as in RLinf LIBERO"
+ },
+ "platform_prior_source": "target platform agentview camera (libero_goal), relative to robot base; declared shared prior",
+ "objects": [
+  {
+   "name": "cabinet",
+   "category": "drawer_cabinet",
+   "xml": "assets/cabinet/cabinet.xml",
+   "free": false,
+   "pos": [
+    0.05,
+    -0.3,
+    0.9
+   ],
+   "quat": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "yaw": 0.0,
+   "top_z": 0.26762400000000003,
+   "joints": [
+    "drawer_bottom",
+    "drawer_middle",
+    "drawer_top"
+   ],
+   "material": "wood",
+   "attrs": {
+    "drawer_damping": 5.0,
+    "width": 0.19379999999999997,
+    "depth": 0.17975412000000002,
+    "height": 0.26762400000000003,
+    "density": 600.0,
+    "friction": 0.7
+   },
+   "param_refs": [
+    "cabinet_depth",
+    "cabinet_height",
+    "cabinet_width",
+    "drawer_damping"
+   ]
+  },
+  {
+   "name": "stove",
+   "category": "stove",
+   "xml": "assets/stove/stove.xml",
+   "free": false,
+   "pos": [
+    0.05,
+    0.3,
+    0.9
+   ],
+   "quat": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "yaw": 0.0,
+   "top_z": 0.06652816,
+   "joints": [
+    "knob"
+   ],
+   "material": "steel",
+   "attrs": {
+    "width": 0.192,
+    "depth": 0.18057600000000001,
+    "height": 0.02905632,
+    "density": 5000.0,
+    "friction": 0.6,
+    "knob_housing_length": 0.1083456,
+    "knob_height": 0.04,
+    "knob_offset_y": 0.0
+   },
+   "param_refs": [
+    "stove_depth",
+    "stove_height",
+    "stove_width"
+   ]
+  },
+  {
+   "name": "rack",
+   "category": "rack",
+   "xml": "assets/rack/rack.xml",
+   "free": false,
+   "pos": [
+    -0.05,
+    0.05,
+    0.9
+   ],
+   "quat": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "yaw": 0.0,
+   "top_z": 0.3347815143401612,
+   "joints": [],
+   "material": "wood",
+   "attrs": {
+    "width": 0.1653284437000036,
+    "depth": 0.2137464132389268,
+    "height": 0.2847815143401612,
+    "density": 600.0,
+    "friction": 0.7,
+    "incline": 0.12834858162858082,
+    "post_raise_neg": 0.02,
+    "post_raise_pos": 0.0,
+    "post_bar": 0.008,
+    "post_y_neg": 0.45,
+    "bar_y_neg": 0.0,
+    "bar_end_pos": 0.0,
+    "post_y_pos": 0.25,
+    "panel_dz": 0.005,
+    "panel_x0": 0.0,
+    "panel_y_end": 0.35,
+    "halftop_dz": 0.03,
+    "halftop_xf": 0.0,
+    "halftop_ye": -0.1,
+    "rib_cx": 0.035,
+    "rib_hw": 0.01,
+    "rib_dz": 0.05,
+    "rib_ye": -0.035,
+    "halftop_xb": 0.085,
+    "far_ext": 0.07,
+    "far_slats": 3,
+    "far_slat_w": 0.008
+   },
+   "param_refs": [
+    "rack_depth",
+    "rack_height",
+    "rack_width"
+   ]
+  },
+  {
+   "name": "plate",
+   "category": "plate",
+   "xml": "assets/plate/plate.xml",
+   "free": true,
+   "pos": [
+    -0.28,
+    0.2,
+    0.903
+   ],
+   "quat": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "yaw": 0.0,
+   "top_z": 0.018,
+   "joints": [],
+   "material": "ceramic",
+   "attrs": {
+    "radius": 0.06804,
+    "density": 2300.0,
+    "friction": 0.7
+   },
+   "param_refs": [
+    "plate_radius"
+   ]
+  },
+  {
+   "name": "bowl",
+   "category": "bowl",
+   "xml": "assets/bowl/bowl.xml",
+   "free": true,
+   "pos": [
+    -0.28,
+    -0.22,
+    0.9
+   ],
+   "quat": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "yaw": 0.0,
+   "top_z": 0.04646249999999999,
+   "joints": [],
+   "material": "ceramic",
+   "attrs": {
+    "radius": 0.05745600000000001,
+    "height": 0.04646249999999999,
+    "density": 2300.0,
+    "friction": 0.7
+   },
+   "param_refs": [
+    "bowl_height",
+    "bowl_radius"
+   ]
+  },
+  {
+   "name": "cream_cheese",
+   "category": "box",
+   "xml": "assets/cream_cheese/cream_cheese.xml",
+   "free": true,
+   "pos": [
+    -0.38,
+    0.0,
+    0.9
+   ],
+   "quat": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "yaw": 0.0,
+   "top_z": 0.018852241598284705,
+   "joints": [],
+   "material": "package",
+   "attrs": {
+    "size_x": 0.07913589899539367,
+    "size_y": 0.04123235685236609,
+    "size_z": 0.018852241598284705,
+    "density": 500.0,
+    "friction": 0.7
+   },
+   "param_refs": [
+    "box_size_x",
+    "box_size_y",
+    "box_size_z"
+   ]
+  },
+  {
+   "name": "wine_bottle",
+   "category": "bottle",
+   "xml": "assets/wine_bottle/wine_bottle.xml",
+   "free": true,
+   "pos": [
+    -0.25,
+    -0.05,
+    0.903
+   ],
+   "quat": [
+    1.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "yaw": 0.0,
+   "top_z": 0.15,
+   "joints": [],
+   "material": "bottle",
+   "attrs": {
+    "radius": 0.021,
+    "height": 0.15,
+    "density": 1000.0,
+    "friction": 0.6
+   },
+   "param_refs": [
+    "bottle_height",
+    "bottle_radius"
+   ]
+  }
+ ],
+ "materials": {
+  "tabletop": "table_surface",
+  "ceramic": "ceramic",
+  "wood": "wood",
+  "steel": "metal",
+  "package": "cardboard_package",
+  "bottle": "filled_bottle"
+ },
+ "mechanisms": [
+  {
+   "kind": "joint_damping",
+   "obj": "stove",
+   "joint": "knob",
+   "value": 0.05
+  }
+ ],
+ "params": {
+  "drawer_damping": {
+   "init": 5.0,
+   "bounds": [
+    0.5,
+    50.0
+   ],
+   "value": 5.0
+  },
+  "cabinet_width": {
+   "init": 0.3,
+   "bounds": [
+    0.15,
+    0.5
+   ],
+   "value": 0.19379999999999997
+  },
+  "cabinet_depth": {
+   "init": 0.26,
+   "bounds": [
+    0.13,
+    0.45
+   ],
+   "value": 0.17975412000000002
+  },
+  "cabinet_height": {
+   "init": 0.36,
+   "bounds": [
+    0.15,
+    0.6
+   ],
+   "value": 0.26762400000000003
+  },
+  "stove_width": {
+   "init": 0.24,
+   "bounds": [
+    0.12,
+    0.45
+   ],
+   "value": 0.192
+  },
+  "stove_depth": {
+   "init": 0.22,
+   "bounds": [
+    0.11,
+    0.4
+   ],
+   "value": 0.18057600000000001
+  },
+  "stove_height": {
+   "init": 0.04,
+   "bounds": [
+    0.01,
+    0.12
+   ],
+   "value": 0.02905632
+  },
+  "rack_width": {
+   "init": 0.24,
+   "bounds": [
+    0.1,
+    0.6
+   ],
+   "value": 0.16992
+  },
+  "rack_depth": {
+   "init": 0.16,
+   "bounds": [
+    0.06,
+    0.4
+   ],
+   "value": 0.0843913728
+  },
+  "rack_height": {
+   "init": 0.063,
+   "bounds": [
+    0.03,
+    0.5
+   ],
+   "value": 0.3094803936
+  },
+  "plate_radius": {
+   "init": 0.1,
+   "bounds": [
+    0.04,
+    0.16
+   ],
+   "value": 0.06804
+  },
+  "bowl_radius": {
+   "init": 0.07,
+   "bounds": [
+    0.04,
+    0.1
+   ],
+   "value": 0.05745600000000001
+  },
+  "bowl_height": {
+   "init": 0.05,
+   "bounds": [
+    0.025,
+    0.09
+   ],
+   "value": 0.037169999999999995
+  },
+  "box_size_x": {
+   "init": 0.07,
+   "bounds": [
+    0.03,
+    0.14
+   ],
+   "value": 0.07
+  },
+  "box_size_y": {
+   "init": 0.05,
+   "bounds": [
+    0.025,
+    0.12
+   ],
+   "value": 0.04000000000000001
+  },
+  "box_size_z": {
+   "init": 0.025,
+   "bounds": [
+    0.012,
+    0.08
+   ],
+   "value": 0.026250000000000002
+  },
+  "bottle_radius": {
+   "init": 0.035,
+   "bounds": [
+    0.012,
+    0.06
+   ],
+   "value": 0.021
+  },
+  "bottle_height": {
+   "init": 0.28,
+   "bounds": [
+    0.08,
+    0.4
+   ],
+   "value": 0.15
+  },
+  "knob_damping": {
+   "init": 0.05,
+   "bounds": [
+    0.005,
+    0.5
+   ],
+   "value": 0.05
+  },
+  "tabletop.density": {
+   "init": 600.0,
+   "bounds": [
+    350.0,
+    950.0
+   ],
+   "material_class": "table_surface",
+   "value": 600.0
+  },
+  "tabletop.friction": {
+   "init": 1.0,
+   "bounds": [
+    0.5,
+    1.5
+   ],
+   "material_class": "table_surface",
+   "value": 1.0
+  },
+  "ceramic.density": {
+   "init": 2300.0,
+   "bounds": [
+    1800.0,
+    2700.0
+   ],
+   "material_class": "ceramic",
+   "value": 2300.0
+  },
+  "ceramic.friction": {
+   "init": 0.7,
+   "bounds": [
+    0.4,
+    1.1
+   ],
+   "material_class": "ceramic",
+   "value": 0.7
+  },
+  "wood.density": {
+   "init": 600.0,
+   "bounds": [
+    350.0,
+    950.0
+   ],
+   "material_class": "wood",
+   "value": 600.0
+  },
+  "wood.friction": {
+   "init": 0.7,
+   "bounds": [
+    0.4,
+    1.1
+   ],
+   "material_class": "wood",
+   "value": 0.7
+  },
+  "steel.density": {
+   "init": 5000.0,
+   "bounds": [
+    2600.0,
+    8100.0
+   ],
+   "material_class": "metal",
+   "value": 5000.0
+  },
+  "steel.friction": {
+   "init": 0.6,
+   "bounds": [
+    0.3,
+    1.0
+   ],
+   "material_class": "metal",
+   "value": 0.6
+  },
+  "package.density": {
+   "init": 500.0,
+   "bounds": [
+    150.0,
+    1100.0
+   ],
+   "material_class": "cardboard_package",
+   "value": 500.0
+  },
+  "package.friction": {
+   "init": 0.7,
+   "bounds": [
+    0.4,
+    1.1
+   ],
+   "material_class": "cardboard_package",
+   "value": 0.7
+  },
+  "bottle.density": {
+   "init": 1000.0,
+   "bounds": [
+    600.0,
+    1400.0
+   ],
+   "material_class": "filled_bottle",
+   "value": 1000.0
+  },
+  "bottle.friction": {
+   "init": 0.6,
+   "bounds": [
+    0.3,
+    1.0
+   ],
+   "material_class": "filled_bottle",
+   "value": 0.6
+  }
+ },
+ "state_note": "object pos/quat are nominal per-episode state, re-estimated per episode (S5)",
+ "contact_ablation_note": "same frozen meshes; only material contact mixing differs",
+ "experimental_geometry": {
+  "model": "RGB multi-episode supported generic box",
+  "episodes": [
+   "libero_goal_t0_i0",
+   "libero_goal_t1_i0",
+   "libero_goal_t2_i0",
+   "libero_goal_t3_i0",
+   "libero_goal_t4_i0",
+   "libero_goal_t5_i0"
+  ],
+  "Target_input": false
+ },
+ "experimental_bowl_support": {
+  "radial_scale": 1.0,
+  "vertical_scale": 1.25,
+  "source": "own frozen meshes; dev bound masks; common table support",
+  "inertia": "fixed baseline for geometry attribution",
+  "Target_input": false
+ },
+ "rack_scale_scan": {
+  "scale": 1.0,
+  "source": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_supported_silhouette_dev_v1/candidate01",
+  "pose": "re-fitted to six dev silhouettes, dims fixed"
+ },
+ "rack_rib_v31": {
+  "base": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00",
+  "prev": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10",
+  "rib": [
+   0.035,
+   0.01,
+   0.05,
+   -0.035
+  ],
+  "plate_xb": 0.085,
+  "rule": "v29 cand10 + narrow -y rib (+ optional plate back cut); rest unchanged"
+ },
+ "rack_far_v36": {
+  "prev": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_rib_dev_v31/cand18",
+  "ef": 0.07,
+  "n": 3,
+  "sw": 0.008,
+  "rule": "v31 cand18 + far-end thin slats at top height, no wall"
+ },
+ "rack_hfield_v43": {
+  "prev": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_far_dev_v36/cand03",
+  "columns": 436,
+  "disabled_geoms": 18,
+  "cell": 0.01,
+  "zt": 0.22,
+  "prior": "max of 5 rays"
+ },
+ "world_sha256": "585ab5120df1f6fdc01d4158ee3725fbea7eb424bef676832e126a0874d1f11d"
+}

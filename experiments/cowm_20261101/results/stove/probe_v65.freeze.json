@@ -1,0 +1,107 @@
+{
+ "queries": [
+  "libero_goal_t7_i0__v65_a0_m05",
+  "libero_goal_t7_i0__v65_a0_m20",
+  "libero_goal_t7_i0__v65_a0_p05",
+  "libero_goal_t7_i0__v65_a0_p20",
+  "libero_goal_t7_i0__v65_a2_m05",
+  "libero_goal_t7_i0__v65_a2_m20",
+  "libero_goal_t7_i0__v65_a2_p05",
+  "libero_goal_t7_i0__v65_a2_p20",
+  "libero_goal_t7_i1__v65_a0_m20",
+  "libero_goal_t7_i1__v65_a0_p20",
+  "libero_goal_t7_i2__v65_a0_m20",
+  "libero_goal_t7_i2__v65_a0_p20"
+ ],
+ "query_sha256": {
+  "libero_goal_t7_i0__v65_a0_m05": "a67fdee2cbc45ee0c2cb4ed7a51c1ce1300e737109a03d91371f3b8062325a4f",
+  "libero_goal_t7_i0__v65_a0_m20": "b177f789357e0a22a4503701e9dba2c89af67a2b162a4b79b1e16bb09c84a3dc",
+  "libero_goal_t7_i0__v65_a0_p05": "1df49dc94272142abd65f6cd46a748e9c5d015fe8f222e4d9e4101510ce60243",
+  "libero_goal_t7_i0__v65_a0_p20": "33d72469146d66c66d05b1f8d1bcf5962f7e5e8cc9f48b3fe535806ee27660b1",
+  "libero_goal_t7_i0__v65_a2_m05": "853423f4be72e3c86a088ce3d7900eb617ba719247a02f1704ee026c110344dd",
+  "libero_goal_t7_i0__v65_a2_m20": "a5de051dc2c75ac2a4c4a004078dee8ff7ce135b42e4f52ec5542e8c4ea57e41",
+  "libero_goal_t7_i0__v65_a2_p05": "08a19fb5d79dba4ea38b9b18fbfaaf65fcee148c97316a492f1e7897a0cdf240",
+  "libero_goal_t7_i0__v65_a2_p20": "2489c7457a9713209ec1a97d98835f7368df905c1038e82da2687fbbfd834cd8",
+  "libero_goal_t7_i1__v65_a0_m20": "1669de9ea69e7dc4bd9e7b431723a84383d1732a781587b2a88958bdb37d4227",
+  "libero_goal_t7_i1__v65_a0_p20": "1652e1d871581542d0de9fea3a79f702c6c0c4045f6ac5457b27b639b0e48b64",
+  "libero_goal_t7_i2__v65_a0_m20": "0cc1bb9f2f17f539fe354e87b75b1b0c981d042d235c1593ca11d8d9c91f88bf",
+  "libero_goal_t7_i2__v65_a0_p20": "f4e080b9499ef9986de50ad1ad5f428cf611d250d0f8f000fcf1498c59087c1f"
+ },
+ "spec": [
+  [
+   0,
+   0,
+   -1,
+   0.05
+  ],
+  [
+   0,
+   0,
+   -1,
+   0.2
+  ],
+  [
+   0,
+   0,
+   1,
+   0.05
+  ],
+  [
+   0,
+   0,
+   1,
+   0.2
+  ],
+  [
+   0,
+   2,
+   -1,
+   0.05
+  ],
+  [
+   0,
+   2,
+   -1,
+   0.2
+  ],
+  [
+   0,
+   2,
+   1,
+   0.05
+  ],
+  [
+   0,
+   2,
+   1,
+   0.2
+  ],
+  [
+   1,
+   0,
+   -1,
+   0.2
+  ],
+  [
+   1,
+   0,
+   1,
+   0.2
+  ],
+  [
+   2,
+   0,
+   -1,
+   0.2
+  ],
+  [
+   2,
+   0,
+   1,
+   0.2
+  ]
+ ],
+ "script_sha256": "49a5cdd276c733a8d4b8154f5362eeefc4c56fd394fac9db75c481c8f339a29b",
+ "GT_inputs": false,
+ "data_roles": "fit evidence"
+}

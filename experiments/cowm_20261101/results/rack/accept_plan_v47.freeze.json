@@ -1,0 +1,351 @@
+{
+ "frozen_model": {
+  "result": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_hfield_v46/iter4/result.json",
+  "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_hfield_v46/iter4/world",
+  "world_tree_sha256": "53c9d9274bf414716280e28397bc5d7d255989cdb54996256ff0745f19a76651",
+  "states": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/states",
+  "transition_score": {
+   "trans_err_mean": 0.957,
+   "trans_err_max": 4,
+   "n_ge3": 2,
+   "n": 46,
+   "public_static_iou": 0.66187,
+   "loo_last_layer": {
+    "lag": 1.0,
+    "n": 46,
+    "resid_mean_cm": 0.881,
+    "resid_over_2cm": 2,
+    "loo_over_2cm": 2,
+    "loo_mean_cm": 0.908,
+    "sig": 0.02,
+    "lam": 2.0,
+    "location": "eef local xy at model first contact"
+   }
+  }
+ },
+ "reference_models": {
+  "v43i3": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_hfield_v43/iter3",
+  "v36c03": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_far_dev_v36/cand03",
+  "v31c18": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_rib_dev_v31/cand18",
+  "v29c10": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10",
+  "v25c01": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01",
+  "v23c03": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03",
+  "v21c07": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07",
+  "v8": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00"
+ },
+ "planning_world": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/bowl_support_dev_v1/world11": "37c41e83375b75b762d0c1b05b172e80d0d852918c4ccc7a898254c32955f668"
+ },
+ "grid_mm": {
+  "acc47_x+000_y-050": [
+   0,
+   -50
+  ],
+  "acc47_x+050_y+020": [
+   50,
+   20
+  ],
+  "acc47_x+110_y-020": [
+   110,
+   -20
+  ],
+  "acc47_x+140_y-010": [
+   140,
+   -10
+  ],
+  "acc47_x+040_y+040": [
+   40,
+   40
+  ],
+  "acc47_x+080_y+070": [
+   80,
+   70
+  ]
+ },
+ "previously_used_positions_mm": [
+  [
+   -80,
+   -80
+  ],
+  [
+   -80,
+   0
+  ],
+  [
+   -80,
+   80
+  ],
+  [
+   0,
+   -80
+  ],
+  [
+   0,
+   0
+  ],
+  [
+   0,
+   80
+  ],
+  [
+   80,
+   -80
+  ],
+  [
+   80,
+   0
+  ],
+  [
+   80,
+   80
+  ],
+  [
+   40,
+   -80
+  ],
+  [
+   40,
+   0
+  ],
+  [
+   40,
+   80
+  ],
+  [
+   120,
+   -80
+  ],
+  [
+   120,
+   0
+  ],
+  [
+   120,
+   80
+  ],
+  [
+   60,
+   -40
+  ],
+  [
+   60,
+   40
+  ],
+  [
+   80,
+   -40
+  ],
+  [
+   80,
+   40
+  ],
+  [
+   100,
+   -40
+  ],
+  [
+   100,
+   40
+  ],
+  [
+   20,
+   -40
+  ],
+  [
+   20,
+   40
+  ],
+  [
+   110,
+   -40
+  ],
+  [
+   110,
+   40
+  ],
+  [
+   70,
+   -60
+  ],
+  [
+   90,
+   -60
+  ],
+  [
+   30,
+   -20
+  ],
+  [
+   30,
+   20
+  ],
+  [
+   130,
+   -20
+  ],
+  [
+   130,
+   20
+  ],
+  [
+   50,
+   -60
+  ],
+  [
+   100,
+   -20
+  ],
+  [
+   40,
+   -60
+  ],
+  [
+   60,
+   -60
+  ],
+  [
+   110,
+   -60
+  ],
+  [
+   50,
+   -40
+  ],
+  [
+   90,
+   -40
+  ],
+  [
+   70,
+   40
+  ],
+  [
+   150,
+   0
+  ],
+  [
+   170,
+   0
+  ],
+  [
+   190,
+   0
+  ],
+  [
+   170,
+   -50
+  ],
+  [
+   170,
+   50
+  ],
+  [
+   150,
+   -50
+  ],
+  [
+   -100,
+   0
+  ],
+  [
+   -120,
+   0
+  ],
+  [
+   -140,
+   0
+  ],
+  [
+   -110,
+   -50
+  ],
+  [
+   -110,
+   50
+  ],
+  [
+   -130,
+   -50
+  ],
+  [
+   160,
+   20
+  ],
+  [
+   180,
+   -30
+  ],
+  [
+   140,
+   40
+  ],
+  [
+   100,
+   60
+  ],
+  [
+   20,
+   -60
+  ],
+  [
+   120,
+   -40
+  ],
+  [
+   10,
+   -30
+  ],
+  [
+   70,
+   -20
+  ],
+  [
+   90,
+   50
+  ],
+  [
+   130,
+   -50
+  ],
+  [
+   150,
+   30
+  ],
+  [
+   60,
+   60
+  ]
+ ],
+ "rule": {
+  "tol_steps": 5,
+  "tol_cm": 2.0,
+  "min_valid": 4,
+  "set": "ACCEPT iff >= min_valid valid and all valid pass"
+ },
+ "inputs": {
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/natural_states_all_dev_v1/libero_goal_t0_i0/state.json": "14b7c833b73b4373f171e456b982a99cb77f3275b95b47a853f6e73e5a838e8b",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/robot_rgb_all_dev_v2/libero_goal_t0_i0/robot.json": "219a0d84253b12951bb12ed9f8ac4a9b83939c237ea7548ce7e9b74a259d8cc0",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_hfield_v46/score_v47.json": "f2bd87f32f5e6b81b0b077557437998483b5b5fe74ae394ca6b1590f1954dc69",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_hfield_v46/iter4/result.json": "a4075a73bdaa91fc9267fd52ef2ba6eb8eb33550fb94c698716ed602cff71d06",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_hfield_v43/iter3/result.json": "58c722c7cab72bc56ce888ab0ffa1b044c996664b3e7bfae4d584361b5af31a0",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_far_dev_v36/cand03/result.json": "28b3610be4e9998609bf7a43400e627c6e014e7ab5a0e5d90040ea6ebb5fc130",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_rib_dev_v31/cand18/result.json": "2cec4128dfe0584c2efbbbe1c875d541aecf3b4b115bc6f625ac5f130f60d126",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_halftop_dev_v29/cand10/result.json": "4b92addc2a1b91823be1e920802010f3893628042f376a367e14e3fe93336e37",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_side_dev_v25/cand01/result.json": "bf9c39749bb3cd3961ad2ba5ca4a4f4ab5022b2e651674ad3a624e9e253a9156",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_panel_dev_v23/cand03/result.json": "f3d5b1bac2e7d6566a29752c5a43e1711ac5a6fcaed57f397c9930415b1e7897",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_post_dev_v21/cand07/result.json": "816272d91f3a08ae55f4d3c0df8843434511ee61489e7fbc9ce5af86d7b2a9cf",
+  "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/rack_scale_scan_dev_v8/scale00/result.json": "3b2eb13603653c405539dcec0ce4dd51f5b8ad8cd7997cf21f96521647086173"
+ },
+ "script_sha256": "a5ad5156a8f9a415e9b8ffa52f40b3ea44b61e05263e9b889f22a13d8f8341a5",
+ "selection_notes": {
+  "method": "visual geometry of v36c03 unchanged; upper-tier collision replaced by invisible 1 cm collision columns (prior = max of 5 rays) + 3 counterexample-guided residual layers fitted on public RGB deceleration onsets of 42 public probes (WorldCoder / GIF-MCTS style repair loop), LOO-CV per layer",
+  "public_transition": "46 valid probes (48 incl. v44 dense): mean 1.87 -> 0.957 steps, max 4, >=3 steps 12 -> 2 (in-sample); residuals attached to eef local xy (v46 fix)",
+  "loo_last_layer": "0.717 cm mean, 1/40 over 2 cm (out-of-sample estimate)",
+  "public_static_iou": ".66187 unchanged (columns transparent)",
+  "excluded": "acc26_x+070_y-060, acc41_x+020_y-060 (no blocked moment; slide-off), rule fixed before fitting",
+  "rejected_before": "v41: v36c03 3/6 (eef 2.3-2.8 cm)"
+ },
+ "GT_inputs": false,
+ "Target_queries_executed": 0,
+ "data_roles": "fit evidence so far: 9 v3 positions + dense rear v16 + v22 (dense v23) + v24 (dense v25) + v26 (dense v27) positions; Target first contact seen for v22/v24/v26; the v27-v31 families were informed by the v24/v26 -y outcome. These 6 v47 positions are acceptance-only until their Target result is seen; afterwards they become fit evidence"
+}

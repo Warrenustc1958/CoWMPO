@@ -1,0 +1,158 @@
+{
+ "rule": {
+  "final_correct": "all probes",
+  "onset_tol_steps": 8,
+  "observed_on": "red pixels >= 20 in public stove mask"
+ },
+ "n": 12,
+ "passed": 9,
+ "n_observed_on": 5,
+ "rows": [
+  {
+   "key": "libero_goal_t7_i0__wrist0_m",
+   "observed_final": true,
+   "model_final": true,
+   "final_correct": true,
+   "observed_onset": 96,
+   "model_onset": 91,
+   "onset_err": 5,
+   "pass": true,
+   "model_max_q": 0.614,
+   "prefix_exact_frames": 23
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist0_p",
+   "observed_final": false,
+   "model_final": true,
+   "final_correct": false,
+   "observed_onset": null,
+   "model_onset": 112,
+   "onset_err": null,
+   "pass": false,
+   "model_max_q": 0.6,
+   "prefix_exact_frames": 23
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist1_m",
+   "observed_final": true,
+   "model_final": true,
+   "final_correct": true,
+   "observed_onset": 118,
+   "model_onset": 93,
+   "onset_err": 25,
+   "pass": false,
+   "model_max_q": 0.656,
+   "prefix_exact_frames": 23
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist2_p",
+   "observed_final": true,
+   "model_final": true,
+   "final_correct": true,
+   "observed_onset": 100,
+   "model_onset": 95,
+   "onset_err": 5,
+   "pass": true,
+   "model_max_q": 0.695,
+   "prefix_exact_frames": 23
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist0_m",
+   "observed_final": false,
+   "model_final": false,
+   "final_correct": true,
+   "observed_onset": null,
+   "model_onset": null,
+   "onset_err": null,
+   "pass": true,
+   "model_max_q": 0.266,
+   "prefix_exact_frames": 22
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist1_p",
+   "observed_final": false,
+   "model_final": false,
+   "final_correct": true,
+   "observed_onset": null,
+   "model_onset": null,
+   "onset_err": null,
+   "pass": true,
+   "model_max_q": 0.258,
+   "prefix_exact_frames": 22
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist2_m",
+   "observed_final": false,
+   "model_final": false,
+   "final_correct": true,
+   "observed_onset": null,
+   "model_onset": null,
+   "onset_err": null,
+   "pass": true,
+   "model_max_q": 0.258,
+   "prefix_exact_frames": 22
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist2_p",
+   "observed_final": true,
+   "model_final": true,
+   "final_correct": true,
+   "observed_onset": 108,
+   "model_onset": 105,
+   "onset_err": 3,
+   "pass": true,
+   "model_max_q": 0.6,
+   "prefix_exact_frames": 22
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist0_p",
+   "observed_final": false,
+   "model_final": false,
+   "final_correct": true,
+   "observed_onset": null,
+   "model_onset": null,
+   "onset_err": null,
+   "pass": true,
+   "model_max_q": 0.316,
+   "prefix_exact_frames": 15
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist1_m",
+   "observed_final": false,
+   "model_final": false,
+   "final_correct": true,
+   "observed_onset": null,
+   "model_onset": null,
+   "onset_err": null,
+   "pass": true,
+   "model_max_q": 0.314,
+   "prefix_exact_frames": 15
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist1_p",
+   "observed_final": false,
+   "model_final": false,
+   "final_correct": true,
+   "observed_onset": null,
+   "model_onset": null,
+   "onset_err": null,
+   "pass": true,
+   "model_max_q": 0.31,
+   "prefix_exact_frames": 15
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist2_p",
+   "observed_final": true,
+   "model_final": true,
+   "final_correct": true,
+   "observed_onset": 90,
+   "model_onset": 61,
+   "onset_err": 29,
+   "pass": false,
+   "model_max_q": 0.646,
+   "prefix_exact_frames": 15
+  }
+ ],
+ "decision": "REJECT",
+ "GT_inputs": false
+}

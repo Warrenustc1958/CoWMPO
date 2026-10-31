@@ -1,0 +1,928 @@
+{
+ "top": [
+  {
+   "cand": "r3_056",
+   "frictionloss": 0.11420384269715617,
+   "shape": "cyl r0.025 mus0.363 ft2.13",
+   "k_off": 1.030708652276535,
+   "s_up": 0.32285951929321016,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.5446408653420476,
+   "damping": 0.014285335464642543,
+   "thr": 0.55,
+   "final": 33,
+   "max_err": 13,
+   "frame_err": 62,
+   "eligible": false
+  },
+  {
+   "cand": "r3_030",
+   "frictionloss": 0.10917262124241188,
+   "shape": "cyl r0.025 mus0.393 ft1.96",
+   "k_off": 1.1461414608397338,
+   "s_up": 0.3341241767439455,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.4330980926246313,
+   "damping": 0.011960228956237974,
+   "thr": 0.525,
+   "final": 33,
+   "max_err": 14,
+   "frame_err": 64,
+   "eligible": false
+  },
+  {
+   "cand": "r3_081",
+   "frictionloss": 0.10615603205971037,
+   "shape": "cyl r0.024 mus0.546 ft1.77",
+   "k_off": 1.0977410047312888,
+   "s_up": 0.3263895524232792,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.673433658495222,
+   "damping": 0.013993362509458034,
+   "thr": 0.55,
+   "final": 33,
+   "max_err": 14,
+   "frame_err": 71,
+   "eligible": false
+  },
+  {
+   "cand": "r3_081",
+   "frictionloss": 0.10615603205971037,
+   "shape": "cyl r0.024 mus0.546 ft1.77",
+   "k_off": 1.0977410047312888,
+   "s_up": 0.3263895524232792,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.673433658495222,
+   "damping": 0.013993362509458034,
+   "thr": 0.525,
+   "final": 33,
+   "max_err": 15,
+   "frame_err": 65,
+   "eligible": false
+  },
+  {
+   "cand": "r3_030",
+   "frictionloss": 0.10917262124241188,
+   "shape": "cyl r0.025 mus0.393 ft1.96",
+   "k_off": 1.1461414608397338,
+   "s_up": 0.3341241767439455,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.4330980926246313,
+   "damping": 0.011960228956237974,
+   "thr": 0.5,
+   "final": 33,
+   "max_err": 16,
+   "frame_err": 63,
+   "eligible": false
+  },
+  {
+   "cand": "r3_137",
+   "frictionloss": 0.1159660789719791,
+   "shape": "cyl r0.025 mus0.408 ft1.81",
+   "k_off": 1.0182865049358547,
+   "s_up": 0.32213404576914073,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.3755002203116198,
+   "damping": 0.013655824018301533,
+   "thr": 0.525,
+   "final": 33,
+   "max_err": 16,
+   "frame_err": 64,
+   "eligible": false
+  },
+  {
+   "cand": "r3_081",
+   "frictionloss": 0.10615603205971037,
+   "shape": "cyl r0.024 mus0.546 ft1.77",
+   "k_off": 1.0977410047312888,
+   "s_up": 0.3263895524232792,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.673433658495222,
+   "damping": 0.013993362509458034,
+   "thr": 0.5,
+   "final": 33,
+   "max_err": 17,
+   "frame_err": 61,
+   "eligible": false
+  },
+  {
+   "cand": "r3_137",
+   "frictionloss": 0.1159660789719791,
+   "shape": "cyl r0.025 mus0.408 ft1.81",
+   "k_off": 1.0182865049358547,
+   "s_up": 0.32213404576914073,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.3755002203116198,
+   "damping": 0.013655824018301533,
+   "thr": 0.5,
+   "final": 33,
+   "max_err": 17,
+   "frame_err": 63,
+   "eligible": false
+  },
+  {
+   "cand": "r3_000",
+   "frictionloss": 0.11856586094913642,
+   "shape": "cyl r0.023 mus0.413 ft1.94",
+   "k_off": 1.115195890406075,
+   "s_up": 0.3098651063954308,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.5702941912648127,
+   "damping": 0.01265428290174057,
+   "thr": 0.575,
+   "final": 33,
+   "max_err": 17,
+   "frame_err": 69,
+   "eligible": false
+  },
+  {
+   "cand": "r3_166",
+   "frictionloss": 0.12786350612797195,
+   "shape": "cyl r0.024 mus0.331 ft1.81",
+   "k_off": 1.172671787030642,
+   "s_up": 0.3478288428650842,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.339816913074063,
+   "damping": 0.013582565804566146,
+   "thr": 0.525,
+   "final": 33,
+   "max_err": 17,
+   "frame_err": 73,
+   "eligible": false
+  },
+  {
+   "cand": "r3_056",
+   "frictionloss": 0.11420384269715617,
+   "shape": "cyl r0.025 mus0.363 ft2.13",
+   "k_off": 1.030708652276535,
+   "s_up": 0.32285951929321016,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.5446408653420476,
+   "damping": 0.014285335464642543,
+   "thr": 0.525,
+   "final": 33,
+   "max_err": 18,
+   "frame_err": 65,
+   "eligible": false
+  },
+  {
+   "cand": "r3_166",
+   "frictionloss": 0.12786350612797195,
+   "shape": "cyl r0.024 mus0.331 ft1.81",
+   "k_off": 1.172671787030642,
+   "s_up": 0.3478288428650842,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.339816913074063,
+   "damping": 0.013582565804566146,
+   "thr": 0.475,
+   "final": 33,
+   "max_err": 18,
+   "frame_err": 65,
+   "eligible": false
+  },
+  {
+   "cand": "r3_030",
+   "frictionloss": 0.10917262124241188,
+   "shape": "cyl r0.025 mus0.393 ft1.96",
+   "k_off": 1.1461414608397338,
+   "s_up": 0.3341241767439455,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.4330980926246313,
+   "damping": 0.011960228956237974,
+   "thr": 0.475,
+   "final": 33,
+   "max_err": 18,
+   "frame_err": 69,
+   "eligible": false
+  },
+  {
+   "cand": "r3_166",
+   "frictionloss": 0.12786350612797195,
+   "shape": "cyl r0.024 mus0.331 ft1.81",
+   "k_off": 1.172671787030642,
+   "s_up": 0.3478288428650842,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.339816913074063,
+   "damping": 0.013582565804566146,
+   "thr": 0.5,
+   "final": 33,
+   "max_err": 18,
+   "frame_err": 70,
+   "eligible": false
+  },
+  {
+   "cand": "r3_137",
+   "frictionloss": 0.1159660789719791,
+   "shape": "cyl r0.025 mus0.408 ft1.81",
+   "k_off": 1.0182865049358547,
+   "s_up": 0.32213404576914073,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.3755002203116198,
+   "damping": 0.013655824018301533,
+   "thr": 0.475,
+   "final": 33,
+   "max_err": 18,
+   "frame_err": 75,
+   "eligible": false
+  },
+  {
+   "cand": "r3_166",
+   "frictionloss": 0.12786350612797195,
+   "shape": "cyl r0.024 mus0.331 ft1.81",
+   "k_off": 1.172671787030642,
+   "s_up": 0.3478288428650842,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.339816913074063,
+   "damping": 0.013582565804566146,
+   "thr": 0.55,
+   "final": 33,
+   "max_err": 18,
+   "frame_err": 80,
+   "eligible": false
+  },
+  {
+   "cand": "r3_056",
+   "frictionloss": 0.11420384269715617,
+   "shape": "cyl r0.025 mus0.363 ft2.13",
+   "k_off": 1.030708652276535,
+   "s_up": 0.32285951929321016,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.5446408653420476,
+   "damping": 0.014285335464642543,
+   "thr": 0.5,
+   "final": 33,
+   "max_err": 19,
+   "frame_err": 70,
+   "eligible": false
+  },
+  {
+   "cand": "r3_081",
+   "frictionloss": 0.10615603205971037,
+   "shape": "cyl r0.024 mus0.546 ft1.77",
+   "k_off": 1.0977410047312888,
+   "s_up": 0.3263895524232792,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.673433658495222,
+   "damping": 0.013993362509458034,
+   "thr": 0.475,
+   "final": 33,
+   "max_err": 19,
+   "frame_err": 70,
+   "eligible": false
+  },
+  {
+   "cand": "r3_078",
+   "frictionloss": 0.12994369469023148,
+   "shape": "cyl r0.024 mus0.432 ft1.76",
+   "k_off": 1.056235789311102,
+   "s_up": 0.3361411235999264,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.6795166614918786,
+   "damping": 0.012515301962785058,
+   "thr": 0.55,
+   "final": 33,
+   "max_err": 19,
+   "frame_err": 74,
+   "eligible": false
+  },
+  {
+   "cand": "r3_166",
+   "frictionloss": 0.12786350612797195,
+   "shape": "cyl r0.024 mus0.331 ft1.81",
+   "k_off": 1.172671787030642,
+   "s_up": 0.3478288428650842,
+   "s_down": 0.1,
+   "high": 0.6,
+   "stiffness": 1.339816913074063,
+   "damping": 0.013582565804566146,
+   "thr": 0.45,
+   "final": 33,
+   "max_err": 20,
+   "frame_err": 70,
+   "eligible": false
+  }
+ ],
+ "best_rows": [
+  {
+   "key": "policy_libero_goal_t7_i0",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 1
+  },
+  {
+   "key": "policy_libero_goal_t7_i1",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 0
+  },
+  {
+   "key": "policy_libero_goal_t7_i2",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 1
+  },
+  {
+   "key": "old_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "old_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "new_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "new_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "fit_libero_goal_t7_i3",
+   "final_correct": true,
+   "error": 9,
+   "frame_errors": 2
+  },
+  {
+   "key": "fit_libero_goal_t7_i4",
+   "final_correct": true,
+   "error": 8,
+   "frame_errors": 2
+  },
+  {
+   "key": "fit_libero_goal_t7_i5",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 1
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist0_m",
+   "final_correct": true,
+   "error": 13,
+   "frame_errors": 7
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist0_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist1_m",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 2
+  },
+  {
+   "key": "libero_goal_t7_i0__wrist2_p",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 1
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist0_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist2_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__wrist2_p",
+   "final_correct": true,
+   "error": 3,
+   "frame_errors": 1
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist0_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist1_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__wrist2_p",
+   "final_correct": true,
+   "error": 13,
+   "frame_errors": 6
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_m05",
+   "final_correct": true,
+   "error": 8,
+   "frame_errors": 4
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_m20",
+   "final_correct": true,
+   "error": 12,
+   "frame_errors": 6
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_p05",
+   "final_correct": true,
+   "error": 13,
+   "frame_errors": 6
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a0_p20",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 2
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_m05",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 17
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_p05",
+   "final_correct": true,
+   "error": 6,
+   "frame_errors": 3
+  },
+  {
+   "key": "libero_goal_t7_i0__v65_a2_p20",
+   "final_correct": true,
+   "error": 0,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__v65_a0_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i1__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__v65_a0_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "key": "libero_goal_t7_i2__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  }
+ ],
+ "loo": [
+  {
+   "held_out": "fit_libero_goal_t7_i3",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "fit_libero_goal_t7_i3",
+   "final_correct": true,
+   "error": 9,
+   "frame_errors": 2
+  },
+  {
+   "held_out": "fit_libero_goal_t7_i4",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "fit_libero_goal_t7_i4",
+   "final_correct": true,
+   "error": 8,
+   "frame_errors": 2
+  },
+  {
+   "held_out": "fit_libero_goal_t7_i5",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "fit_libero_goal_t7_i5",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_m05",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_m05",
+   "final_correct": true,
+   "error": 8,
+   "frame_errors": 4
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_m20",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_m20",
+   "final_correct": true,
+   "error": 12,
+   "frame_errors": 6
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_p05",
+   "chosen": [
+    "r3_022",
+    0.525
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_p05",
+   "final_correct": false,
+   "error": 147,
+   "frame_errors": 4
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a0_p20",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a0_p20",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 2
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_m05",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_m05",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 17
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_m20",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_p05",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_p05",
+   "final_correct": true,
+   "error": 6,
+   "frame_errors": 3
+  },
+  {
+   "held_out": "libero_goal_t7_i0__v65_a2_p20",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__v65_a2_p20",
+   "final_correct": true,
+   "error": 0,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist0_m",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__wrist0_m",
+   "final_correct": true,
+   "error": 13,
+   "frame_errors": 7
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist0_p",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__wrist0_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist1_m",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__wrist1_m",
+   "final_correct": true,
+   "error": 5,
+   "frame_errors": 2
+  },
+  {
+   "held_out": "libero_goal_t7_i0__wrist2_p",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i0__wrist2_p",
+   "final_correct": true,
+   "error": 1,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "libero_goal_t7_i1__v65_a0_m20",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i1__v65_a0_m20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__v65_a0_p20",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i1__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist0_m",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i1__wrist0_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist1_p",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i1__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist2_m",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i1__wrist2_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i1__wrist2_p",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i1__wrist2_p",
+   "final_correct": true,
+   "error": 3,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "libero_goal_t7_i2__v65_a0_m20",
+   "chosen": [
+    "r3_166",
+    0.525
+   ],
+   "key": "libero_goal_t7_i2__v65_a0_m20",
+   "final_correct": false,
+   "error": null,
+   "frame_errors": 18
+  },
+  {
+   "held_out": "libero_goal_t7_i2__v65_a0_p20",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i2__v65_a0_p20",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist0_p",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i2__wrist0_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist1_m",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i2__wrist1_m",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist1_p",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i2__wrist1_p",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "libero_goal_t7_i2__wrist2_p",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "libero_goal_t7_i2__wrist2_p",
+   "final_correct": true,
+   "error": 13,
+   "frame_errors": 6
+  },
+  {
+   "held_out": "new_libero_goal_t0_i0",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "new_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "new_libero_goal_t5_i0",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "new_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "old_libero_goal_t0_i0",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "old_libero_goal_t0_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "old_libero_goal_t5_i0",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "old_libero_goal_t5_i0",
+   "final_correct": true,
+   "error": null,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i0",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "policy_libero_goal_t7_i0",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 1
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i1",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "policy_libero_goal_t7_i1",
+   "final_correct": true,
+   "error": 2,
+   "frame_errors": 0
+  },
+  {
+   "held_out": "policy_libero_goal_t7_i2",
+   "chosen": [
+    "r3_056",
+    0.55
+   ],
+   "key": "policy_libero_goal_t7_i2",
+   "final_correct": true,
+   "error": 4,
+   "frame_errors": 1
+  }
+ ],
+ "loo_final_correct": 31,
+ "loo_onset_errors": [
+  9,
+  8,
+  5,
+  8,
+  12,
+  147,
+  4,
+  6,
+  0,
+  13,
+  5,
+  1,
+  3,
+  13,
+  4,
+  2,
+  4
+ ],
+ "n_eligible": 0,
+ "GT_inputs": false
+}

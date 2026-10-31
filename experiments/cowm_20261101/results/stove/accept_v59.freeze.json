@@ -1,0 +1,64 @@
+{
+ "candidates": [
+  {
+   "name": "d58_067",
+   "fin": [
+    0.008008656687438609,
+    0.004799011544890165,
+    -0.35052030857585226
+   ],
+   "frictionloss": 0.12472637475302617,
+   "shape": "box L0.008 W0.005 th-0.35",
+   "s_up": 0.3250069999778678,
+   "s_down": 0.1,
+   "k_off": 0.6927251711126454,
+   "world": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/stove_detent_v58/world67",
+   "sha": "76671287d461b8084f8beaef1e8e3318f90ba392e1f272711fa7cd3637aa34f7",
+   "loss_Nm": 0.0,
+   "activation": 0.3,
+   "high": 0.6,
+   "stiffness": 3.328415769283086,
+   "damping": 0.05991178755367527
+  }
+ ],
+ "queries": [
+  "libero_goal_t7_i0__wrist0_m",
+  "libero_goal_t7_i0__wrist0_p",
+  "libero_goal_t7_i0__wrist1_m",
+  "libero_goal_t7_i0__wrist2_p",
+  "libero_goal_t7_i1__wrist0_m",
+  "libero_goal_t7_i1__wrist1_p",
+  "libero_goal_t7_i1__wrist2_m",
+  "libero_goal_t7_i1__wrist2_p",
+  "libero_goal_t7_i2__wrist0_p",
+  "libero_goal_t7_i2__wrist1_m",
+  "libero_goal_t7_i2__wrist1_p",
+  "libero_goal_t7_i2__wrist2_p"
+ ],
+ "threshold": 0.575,
+ "rule": {
+  "final_correct": "all probes",
+  "onset_tol_steps": 8,
+  "observed_on": "red pixels >= 20 in public stove mask"
+ },
+ "selection_source": "/data_cf/cowmpo/worlds/codex_s56_20261030_1020/stove_detent_v58/selection.json",
+ "query_sha256": {
+  "libero_goal_t7_i0__wrist0_m": "3ffdca24701a9ece44fb2fce63d99abefab296551fc2c3be1b4c1271eef0ccba",
+  "libero_goal_t7_i0__wrist0_p": "60dd4fabee2d605d1e9d9fba7db3ff7c036800d6bd8655fc5a5e0627402f78be",
+  "libero_goal_t7_i0__wrist1_m": "41796a098018a3cba2b2d05e621c6bb9777f0f7ce053b0c2e519e943268c235a",
+  "libero_goal_t7_i0__wrist2_p": "bd5a2d38ae69968b6d14f99c5b35adf9399bb851d49f683880d13724870fd77d",
+  "libero_goal_t7_i1__wrist0_m": "5aa0697ed6ac8f63f6eb57276ca74106333c8c5bafd71eb23b2d9a85758bf685",
+  "libero_goal_t7_i1__wrist1_p": "4652c4e3c7cd5da6113429d989298ff5725ea0c84fdb9b436e3b5a1a065f3b69",
+  "libero_goal_t7_i1__wrist2_m": "7cc607959785822064b8ff2d7e5e1776caf4a5d2b0991ea314932e61966dc193",
+  "libero_goal_t7_i1__wrist2_p": "ec8949d153dc51a79d60d19010ec73edd8ece09b6379e4120877c90f1f8f6f43",
+  "libero_goal_t7_i2__wrist0_p": "786fae7354a24571d0651642ddfe9363b7a3cf5bbd4baa37b30375eb74d43b9a",
+  "libero_goal_t7_i2__wrist1_m": "2e13d0d5404abae1598e8006585cb08e66729f2e2ed23e2a1cbd4c284b4a7242",
+  "libero_goal_t7_i2__wrist1_p": "c795d1bf0deea6b943c984ed3836921df850ace5cb601b44baf562e76fbefa50",
+  "libero_goal_t7_i2__wrist2_p": "60f64ce135cbc5ae013a175b5b9cdbb63f7065a1ea45912e7861a40dc00e639e"
+ },
+ "script_sha256": "4c5ce329b265ea5f3a872715871f2ab4bade1d0e69b80562fdba257d0bf4f178",
+ "fixture_sha256": "cf33a39b26d1bdbea165438cff24a1a5d3b6100bc0c969396b49eb3c2e8d8235",
+ "GT_inputs": false,
+ "Target_queries_executed": 0,
+ "data_roles": "acceptance-only until scored; never used for v51-v58 fitting"
+}
