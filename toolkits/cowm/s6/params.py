@@ -24,44 +24,63 @@ def _baseline(scene):
 
 
 def apply_params(scene, values):
-    """values: {param_name: value}; unknown names raise. Always applied relative to the compiled baseline."""
+    """Apply validated overrides relative to the compiled baseline; invalid input leaves the model intact."""
     m = scene.env.sim.model
     base = _baseline(scene)
-    m.geom_friction[:] = base["friction"]
-    m.pair_friction[:] = base["pair_friction"]
-    m.body_mass[:] = base["mass"]
-    m.body_inertia[:] = base["inertia"]
+    friction, pairs = base["friction"].copy(), base["pair_friction"].copy()
+    mass, inertia = base["mass"].copy(), base["inertia"].copy()
     world = scene.world
     table_mat = world["table"].get("material")
     for name, v in (values or {}).items():
+        if not isinstance(name, str) or "." not in name:
+            raise ValueError(f"unsupported runtime parameter {name!r}")
         mat, kind = name.rsplit(".", 1)
+        v = float(v)
+        if not np.isfinite(v) or v < 0 or kind == "density" and v == 0:
+            raise ValueError(f"{name}: expected finite {'positive' if kind == 'density' else 'nonnegative'} value")
+        spec = world.get("params", {}).get(name, {})
+        if "bounds" in spec and not spec["bounds"][0] <= v <= spec["bounds"][1]:
+            raise ValueError(f"{name}: {v} outside declared bounds {spec['bounds']}")
         if kind == "friction":
             hit = 0
             for k, o in enumerate(world["objects"]):
                 if o.get("material") == mat:
-                    m.geom_friction[scene.geom2obj == k, 0] = v
-                    hit += 1
+                    sel = scene.geom2obj == k
+                    friction[sel, 0] = v
+                    hit += int(sel.sum())
             for p in range(m.npair):   # object-table <pair>s (contact rule object_table_pair)
                 for g in (int(m.pair_geom1[p]), int(m.pair_geom2[p])):
                     k = int(scene.geom2obj[g])
                     if k >= 0 and world["objects"][k].get("material") == mat:
-                        m.pair_friction[p, 0:2] = v
+                        pairs[p, 0:2] = v
             if mat == table_mat:
                 for g in range(m.ngeom):
                     if (m.geom_id2name(g) or "").startswith("table_collision"):
-                        m.geom_friction[g, 0] = v
+                        friction[g, 0] = v
                         hit += 1
             if not hit:
                 raise ValueError(f"{name}: no geom uses material {mat}")
         elif kind == "density":
-            d0 = world["params"][name]["value"]
+            d0 = spec.get("value")
+            if d0 is None or not np.isfinite(d0) or d0 <= 0:
+                raise ValueError(f"{name}: missing positive compiled density")
             scale = float(v) / d0
+            hit = False
             for k, o in enumerate(world["objects"]):
                 if o.get("material") == mat:
                     root = m.body_name2id(scene.env.objects[k].root_body)
                     sel = np.array([int(m.body_rootid[b]) == root for b in range(m.nbody)])
-                    m.body_mass[sel] = base["mass"][sel] * scale
-                    m.body_inertia[sel] = base["inertia"][sel] * scale
+                    mass[sel] = base["mass"][sel] * scale
+                    inertia[sel] = base["inertia"][sel] * scale
+                    hit = hit or bool(sel.any())
+            if not hit:
+                raise ValueError(f"{name}: no body uses material {mat}")
         else:
             raise ValueError(f"unsupported runtime parameter {name}")
+    if not all(np.isfinite(a).all() for a in (friction, pairs, mass, inertia)):
+        raise ValueError("runtime overrides produced nonfinite model parameters")
+    m.geom_friction[:] = friction
+    m.pair_friction[:] = pairs
+    m.body_mass[:] = mass
+    m.body_inertia[:] = inertia
     scene.env.sim.forward()

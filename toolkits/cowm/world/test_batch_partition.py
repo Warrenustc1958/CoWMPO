@@ -37,6 +37,7 @@ def backend(repo, code_py, world, state_root):
         sys.modules[name] = mod
         spec.loader.exec_module(mod)
     be = object.__new__(sys.modules[name].CodeBackend)
+    be.allow_legacy_state = True  # Mechanical partition fixture predates identity-bound S5 records.
     be.world_dir, be.state_dir, be.world_friction, be._envs, be._first = world, state_root, {}, {}, {}
     return be
 

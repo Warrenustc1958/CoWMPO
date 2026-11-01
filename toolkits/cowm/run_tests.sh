@@ -5,6 +5,7 @@
 set -u
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 TK=$(dirname "$HERE"); REPO=${COWM_REPO:-$(dirname "$TK")}   # COWM_REPO: tests/ + rlinf backend for staging runs
+BACKEND=${COWM_BACKEND_PATH:-$REPO/rlinf/envs/sim/world_model/backend/code.py}
 LOGDIR=${1:-/data_cf/cowmpo/test_logs/$(date +%Y%m%d-%H%M%S)}
 mkdir -p "$LOGDIR"
 export CUDA_VISIBLE_DEVICES= MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa PYTHONPATH=$TK
@@ -30,10 +31,10 @@ suite world_env        $PYW -m pytest -q -p no:cacheprovider "$REPO/tests/cowm/t
 suite snapshot         $PY -m cowm.world.test_snapshot $W5 $REF
 suite snapshot_contact $PY cowm/world/test_snapshot_contact.py $W5 $ST5 $PR libero_goal_t0_i0
 suite reset_order      $PY cowm/world/test_reset_order.py $W5 $ST5 libero_goal_t0_i0 libero_goal_t5_i1
-suite batch_partition  $PYW cowm/world/test_batch_partition.py "$REPO" "$REPO/rlinf/envs/sim/world_model/backend/code.py" \
+suite batch_partition  $PYW cowm/world/test_batch_partition.py "$REPO" "$BACKEND" \
                        $W5 $ST5 libero_goal_t0_i0,libero_goal_t1_i0,libero_goal_t5_i1,libero_goal_t8_i2
 suite contact_rule     $PY -m cowm.world.test_contact_rule "$LOGDIR/contact"
-suite param_chain      $PYW cowm/world/test_param_chain.py "$REPO" "$REPO/rlinf/envs/sim/world_model/backend/code.py" "$LOGDIR/chain"
+suite param_chain      $PYW cowm/world/test_param_chain.py "$REPO" "$BACKEND" "$LOGDIR/chain"
 suite g2_gate          $PY -m cowm.s6.test_g2_gate
 suite registry         $PY -m cowm.world.test_registry
 suite roles            $PY -m cowm.test_roles

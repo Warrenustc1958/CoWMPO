@@ -105,23 +105,45 @@ def probe_frames(probe):
     return sorted(set(probe["frames"]) | {0})
 
 
-def build_validity(ref_world, state_root, probe_root, masks_root, episodes, out):
+def build_validity(ref_world, state_root, probe_root, masks_root, episodes, out, context_rule=None):
     from cowm.init.estimate_state import Scene
     from cowm.s6.plan_probe import apply_state
+    from cowm.world.artifact import tree_sha, verify_tree
+    from cowm.init.observation import load_association, select_masks
 
+    ref_hash = tree_sha(ref_world)
     scene = Scene(ref_world)
     man = {"schema": SCHEMA, "ref_world": ref_world,
+           "ref_world_tree_sha256": ref_hash, "ref_state_root": os.path.abspath(state_root),
            "ref_world_json_sha256": _sha_file(os.path.join(ref_world, "world.json")),
            "masks_root": os.path.abspath(masks_root), "robot_frac": ROBOT_FRAC, "code_sha256": _code_sha(),
            "episodes": {}}
     try:
         for ep in episodes:
-            state = json.load(open(os.path.join(state_root, ep, "state.json")))["objects"]
+            state_path = os.path.join(state_root, ep, "state.json")
+            state_hash = _sha_file(state_path)
+            state_doc = json.load(open(state_path))
+            if (state_doc.get("episode") != ep or state_doc.get("world_tree_sha256") != ref_hash or
+                    state_doc.get("world_sha256") != scene.world["world_sha256"]):
+                raise EvidenceMismatch(f"{ep}: reference state does not belong to the frozen reference world")
+            state = state_doc["objects"]
             probe = json.load(open(os.path.join(probe_root, ep, "probe.json")))
             frames = probe_frames(probe)
             scene.reset()
-            apply_state(scene, state)
-            rec, shas = {}, {}
+            if state_doc.get("robot_required") and state_doc.get("robot") is None:
+                raise EvidenceMismatch(f"{ep}: required robot initialization is missing")
+            context = {}
+            if context_rule == "park_non_probe_v2":
+                from cowm.s6.g2v2_rules import split_issues, park_context
+                blocking, context = split_issues(state, scene.names, probe["obj"])
+                if blocking:
+                    raise EvidenceMismatch(f"{ep}: blocking initial-state issues {blocking}")
+                if context:
+                    state = park_context(state, context)
+            elif context_rule is not None:
+                raise ValueError(f"unknown context_rule {context_rule!r}")
+            apply_state(scene, state, require_matched=not context, robot=state_doc.get("robot"))
+            rec, shas, association_shas = {}, {}, {}
 
             def check(step):
                 f = mask_path(masks_root, ep, step)
@@ -129,9 +151,18 @@ def build_validity(ref_world, state_root, probe_root, masks_root, episodes, out)
                     rec[str(step)] = {"_frame": "missing_file"}
                     return
                 shas[str(step)] = _sha_file(f)
-                mk, rob = np.load(f), scene.robot_mask()
+                frame_ep = f"{ep}__f{step:03d}"
+                association = load_association(os.path.dirname(f), frame_ep)
+                with np.load(f, allow_pickle=False) as archive:
+                    mk = {n: archive[n] for n in archive.files}
+                _, identities = select_masks(scene.names, mk, association)
+                association_shas[str(step)] = _sha_file(os.path.join(os.path.dirname(f), "association.json"))
+                rob = scene.robot_mask()
                 st = {}
-                for n in mk.files:
+                for n, identity in identities.items():
+                    if identity != "matched":
+                        st[n] = "identity_" + identity
+                        continue
                     s = int(mk[n].sum())
                     st[n] = "empty" if s == 0 else ("robot_occluded" if (mk[n] & rob).sum() / s > ROBOT_FRAC
                                                     else "valid")
@@ -143,10 +174,17 @@ def build_validity(ref_world, state_root, probe_root, masks_root, episodes, out)
                 if k in frames:
                     check(k)
             man["episodes"][ep] = {"obj": probe["obj"], "frames_planned": frames, "terminal_step": frames[-1],
+                                   "ref_state_sha256": state_hash,
                                    "actions_sha256": _sha_json(probe["actions"]), "mask_sha256": shas,
+                                   "association_sha256": association_shas,
                                    "frames": rec}
     finally:
         scene.env.close()
+    verify_tree(ref_world, ref_hash)
+    for ep, e in man["episodes"].items():
+        if _sha_file(os.path.join(state_root, ep, "state.json")) != e["ref_state_sha256"]:
+            raise EvidenceMismatch(f"{ep}: reference state changed during manifest construction")
+    verify_manifest(man, probe_root, masks_root, episodes)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     json.dump(man, open(out, "w"), indent=1)
     return man
@@ -163,10 +201,20 @@ def verify_manifest(man, probe_root, masks_root, episodes):
         wj = os.path.join(ref, "world.json")
         if not os.path.isfile(wj) or _sha_file(wj) != man.get("ref_world_json_sha256"):
             raise EvidenceMismatch(f"reference world {ref} missing or changed since the manifest was frozen")
+        if man.get("ref_world_tree_sha256"):
+            from cowm.world.artifact import verify_tree
+            try:
+                verify_tree(ref, man["ref_world_tree_sha256"])
+            except ValueError as exc:
+                raise EvidenceMismatch(str(exc)) from exc
     for ep in episodes:
         e = man["episodes"].get(ep)
         if e is None:
             raise EvidenceMismatch(f"{ep}: not in the frozen manifest")
+        if man.get("ref_state_root"):
+            state_path = os.path.join(man["ref_state_root"], ep, "state.json")
+            if not os.path.isfile(state_path) or _sha_file(state_path) != e.get("ref_state_sha256"):
+                raise EvidenceMismatch(f"{ep}: reference state missing or changed since freezing")
         probe = json.load(open(os.path.join(probe_root, ep, "probe.json")))
         if probe.get("obj") != e["obj"]:
             raise EvidenceMismatch(f"{ep}: probe object {probe.get('obj')!r} != frozen {e['obj']!r}")
@@ -179,6 +227,20 @@ def verify_manifest(man, probe_root, masks_root, episodes):
                     raise EvidenceMismatch(f"{ep} f{step}: mask appeared after freezing")
             elif not os.path.isfile(f) or _sha_file(f) != e["mask_sha256"][step]:
                 raise EvidenceMismatch(f"{ep} f{step}: mask missing or content changed")
+            if "association_sha256" in e and "_frame" not in st:
+                sidecar = os.path.join(os.path.dirname(f), "association.json")
+                if not os.path.isfile(sidecar) or _sha_file(sidecar) != e["association_sha256"].get(step):
+                    raise EvidenceMismatch(f"{ep} f{step}: association missing or changed after freezing")
+
+
+def require_reference_bindings(man, episodes):
+    """S6 fitting requires assets, reference states and identity decisions bound before candidate evaluation."""
+    if not man.get("ref_world_tree_sha256") or not man.get("ref_state_root") or not man.get("ref_world"):
+        raise EvidenceMismatch("S6 requires reference asset/state bindings; freeze a new manifest file")
+    for ep in episodes:
+        e = man.get("episodes", {}).get(ep, {})
+        if not e.get("ref_state_sha256") or "association_sha256" not in e:
+            raise EvidenceMismatch(f"{ep}: S6 requires frozen reference-state and frame-identity bindings")
 
 
 def frame_record(validity, step, obj, world_names, seg_iou, obj_rendered, centroid_err):
@@ -189,9 +251,12 @@ def frame_record(validity, step, obj, world_names, seg_iou, obj_rendered, centro
         return {"status": "missing_file"}
     valid = [n for n, s in v.items() if s == "valid"]
     rec = {"iou": {n: (seg_iou.get(n, 0.0) if n in world_names else 0.0) for n in valid},
+           "uncertain_identities": sorted(n for n, status in v.items() if status.startswith("identity_")),
            "missing_world_objects": sorted(n for n in valid if n not in world_names)}
     if step == 0:
         rec["status"] = "static"
+    elif v.get(obj) in ("identity_ambiguous", "identity_missing"):
+        rec["status"] = v[obj]
     elif v.get(obj) == "robot_occluded":
         rec["status"] = "robot_occluded"
     elif v.get(obj) != "valid":
@@ -204,9 +269,12 @@ def frame_record(validity, step, obj, world_names, seg_iou, obj_rendered, centro
     return rec
 
 
-def episode_metrics(ep, obj, terminal_step, per_frame):
-    """per_frame: {step: frame_record}. Pure: everything a gate decision needs for one episode."""
+def episode_metrics(ep, obj, terminal_step, per_frame, ignore_static_identities=()):
+    """per_frame: {step: frame_record}. Pure: everything a gate decision needs for one episode.
+    ignore_static_identities: v2 context objects (parked, non-probe) whose uncertain step-0 identity does
+    not make the episode incomplete; they are still reported in static_uncertain_identities."""
     st = {"expected": 0, "valid": 0, "missing_file": 0, "obj_absent_in_evidence": 0, "robot_occluded": 0,
+          "identity_ambiguous": 0, "identity_missing": 0,
           "obj_not_rendered": 0}
     errs = []
     for s in sorted(k for k in per_frame if k > 0):
@@ -232,17 +300,31 @@ def episode_metrics(ep, obj, terminal_step, per_frame):
             "dyn_err_px_max": max(errs) if errs else None, "final_obj_iou": term,
             "terminal_step": terminal_step, "terminal_status": t.get("status", "missing_file"),
             "missing_world_objects": missing, "frame_status": st,
-            "complete": static is not None and dyn is not None and term is not None}
+            "initial_state_valid": True, "initial_state_issues": {},
+            "static_uncertain_identities": f0.get("uncertain_identities", []),
+            "complete": static is not None and dyn is not None and term is not None and
+                        not (set(f0.get("uncertain_identities", [])) - set(ignore_static_identities))}
 
 
-def replay(scene, state, probe, masks_root, validity):
+def invalid_initial_state(ep, validity, world_names, issues):
+    """Keep every planned frame and evidence denominator when initialization is untrustworthy."""
+    frames = {s: frame_record(validity, s, validity["obj"], world_names, {}, False, None)
+              for s in validity["frames_planned"]}
+    result = episode_metrics(ep, validity["obj"], validity["terminal_step"], frames)
+    result.update(initial_state_valid=False, initial_state_issues=issues, complete=False,
+                  per_frame={str(s): f for s, f in frames.items()})
+    return result
+
+
+def replay(scene, state, probe, masks_root, validity, robot=None, require_matched=True,
+           ignore_static_identities=()):
     from cowm.init.estimate_state import iou
     from cowm.s6.plan_probe import apply_state
 
     ep, obj = probe["episode"], probe["obj"]
     k_obj = scene.names.index(obj)
     scene.reset()
-    apply_state(scene, state)
+    apply_state(scene, state, require_matched=require_matched, robot=robot)
     p0 = scene.env.object_pos(obj)[:2].copy()
     frames, out = set(probe_frames(probe)), {}
 
@@ -262,23 +344,33 @@ def replay(scene, state, probe, masks_root, validity):
         scene.env.step(np.asarray(act))
         if k in frames:
             measure(k)
-    m = episode_metrics(ep, obj, validity["terminal_step"], out)
+    m = episode_metrics(ep, obj, validity["terminal_step"], out, ignore_static_identities)
     m["pred_disp"] = (scene.env.object_pos(obj)[:2] - p0).tolist()
     m["per_frame"] = {str(s): v for s, v in out.items()}
     return m
 
 
-def evaluate(world, state_root, probe_root, masks_root, episodes, friction=None, params=None, validity_path=None):
+def evaluate(world, state_root, probe_root, masks_root, episodes, friction=None, params=None, validity_path=None,
+             world_tree_sha256=None, require_bound_reference=False, context_rule=None):
     """friction: legacy {material: mu}, applied through apply_params as {"<mat>.friction": mu};
-    params: {"<mat>.friction|density": v}. validity_path defaults to default_validity(masks_root)."""
+    params: {"<mat>.friction|density": v}. validity_path defaults to default_validity(masks_root).
+    context_rule: None (v1: any object issue invalidates) or "park_non_probe_v2" (g2v2_rules)."""
     from cowm.init.estimate_state import Scene
     from cowm.s6.params import apply_params
+    from cowm.init.observation import state_issues
+    from cowm.init.robot_state import robot_issues
+    from cowm.world.artifact import verify_tree
+
+    if world_tree_sha256 is not None:
+        verify_tree(world, world_tree_sha256)
 
     validity_path = validity_path or default_validity(masks_root)
     if not os.path.isfile(validity_path):
         raise FileNotFoundError(f"frozen evidence manifest {validity_path} missing; build it once with "
                                 f"g2_replay --build-validity --world <reference world>")
     man = json.load(open(validity_path))
+    if require_bound_reference:
+        require_reference_bindings(man, episodes)
     verify_manifest(man, probe_root, masks_root, episodes)
     values = dict(params or {})
     values.update({f"{mat}.friction": float(v) for mat, v in (friction or {}).items()})
@@ -288,13 +380,50 @@ def evaluate(world, state_root, probe_root, masks_root, episodes, friction=None,
             apply_params(scene, values)
         res = []
         for ep in episodes:
-            state = json.load(open(os.path.join(state_root, ep, "state.json")))["objects"]
+            document = json.load(open(os.path.join(state_root, ep, "state.json")))
+            state = document["objects"]
             probe = json.load(open(os.path.join(probe_root, ep, "probe.json")))
-            res.append(replay(scene, state, probe, masks_root, man["episodes"][ep]))
+            context = {}
+            if context_rule is None:
+                issues = state_issues(state, scene.names)
+            elif context_rule == "park_non_probe_v2":
+                from cowm.s6.g2v2_rules import split_issues, park_context
+                issues, context = split_issues(state, scene.names, probe["obj"])
+                if context:
+                    state = park_context(state, context)
+            else:
+                raise ValueError(f"unknown context_rule {context_rule!r}")
+            invalid_robot = robot_issues(document.get("robot"))
+            if document.get("robot_required") and document.get("robot") is None:
+                invalid_robot.append("required_robot_state_missing")
+            if invalid_robot:
+                issues["_robot"] = invalid_robot
+            if document.get("episode") != ep:
+                issues["_episode"] = ["state_episode_mismatch"]
+            if document.get("world_sha256") != scene.world["world_sha256"]:
+                issues["_world"] = ["state_world_mismatch"]
+            if world_tree_sha256 is not None and document.get("world_tree_sha256") != world_tree_sha256:
+                issues["_world_tree"] = ["state_world_assets_mismatch"]
+            if probe["obj"] not in scene.names:
+                issues[probe["obj"]] = ["probe_object_absent_from_world"]
+            if issues:
+                res.append(invalid_initial_state(ep, man["episodes"][ep], scene.names, issues))
+                continue
+            # v2: blocking issues are already empty here; context objects are parked, so identity strictness
+            # is only relaxed for them (robot validity is still enforced inside apply_state)
+            result = replay(scene, state, probe, masks_root, man["episodes"][ep],
+                            robot=document.get("robot"), require_matched=not context,
+                            ignore_static_identities=set(context))
+            result["robot_initialization"] = "estimated" if document.get("robot") else "fixed_reset_prior"
+            result["context_rule"] = context_rule
+            result["context_uncertain"] = sorted(context)
+            res.append(result)
         res_info = {"applied_params": values, "contact_rule": scene.world["table"].get("contact_rule", "legacy"),
-                    "validity": os.path.abspath(validity_path)}
+                    "validity": os.path.abspath(validity_path), "world_tree_sha256": world_tree_sha256}
     finally:
         scene.env.close()
+    if world_tree_sha256 is not None:
+        verify_tree(world, world_tree_sha256)
     for r in res:
         r["run"] = res_info
     return res
@@ -305,9 +434,11 @@ def summarize(res):
         v = [r[key] for r in res if r[key] is not None]
         return float(np.mean(v)) if v else None
 
-    st = {k: int(sum(r["frame_status"][k] for r in res)) for k in res[0]["frame_status"]} if res else {}
+    keys = {k for r in res for k in r["frame_status"]}
+    st = {k: int(sum(r["frame_status"].get(k, 0) for r in res)) for k in sorted(keys)}
     exp = st.get("expected", 0)
-    unusable = st.get("missing_file", 0) + st.get("obj_absent_in_evidence", 0) + st.get("robot_occluded", 0)
+    unusable = sum(st.get(k, 0) for k in ("missing_file", "obj_absent_in_evidence", "robot_occluded",
+                                        "identity_ambiguous", "identity_missing"))
     usable = exp - unusable
     dyn = [r["dyn_err_px"] for r in res if r["dyn_err_px"] is not None]
     s = {"n": len(res), "static_iou": mean("static_iou"), "dyn_err_px": mean("dyn_err_px"),
@@ -317,6 +448,8 @@ def summarize(res):
          "evidence_coverage": usable / exp if exp else None,
          "lost_rate": st.get("obj_not_rendered", 0) / usable if usable else None,
          "incomplete_episodes": [r["episode"] for r in res if not r["complete"]],
+         "invalid_initial_states": {r["episode"]: r.get("initial_state_issues", {}) for r in res
+                                    if not r.get("initial_state_valid", True)},
          "missing_world_objects": sorted({n for r in res for n in r["missing_world_objects"]}),
          "terminal_undeterminable": [r["episode"] for r in res if r["final_obj_iou"] is None]}
     checks = {"static": s["static_iou"] is not None and s["static_iou"] >= G2_STATIC_IOU,
@@ -326,7 +459,26 @@ def summarize(res):
               "lost_frames": s["lost_rate"] is not None and s["lost_rate"] <= G2_MAX_LOST,
               "evidence_coverage": s["evidence_coverage"] is not None and s["evidence_coverage"] >= G2_MIN_COVERAGE,
               "every_episode_complete": bool(res) and not s["incomplete_episodes"],
+              "initial_states_valid": bool(res) and not s["invalid_initial_states"],
+              "finite_metrics": bool(res) and all(
+                  r.get(k) is not None and np.isfinite(r[k]) and
+                  (0 <= r[k] <= 1 if k != "dyn_err_px" else r[k] >= 0)
+                  for r in res for k in ("static_iou", "dyn_err_px", "final_obj_iou")),
               "no_missing_world_objects": not s["missing_world_objects"]}
+    if any(r.get("context_rule") for r in res):
+        # v2 (g2v2_rules): flagged episodes are bounded and the verdict must not depend on them
+        from cowm.s6.g2v2_rules import CONTEXT_MAX_FRAC
+        flagged = [r["episode"] for r in res if r.get("context_uncertain")]
+        s["context_uncertain_episodes"] = flagged
+        checks["context_uncertain_rate"] = len(flagged) <= CONTEXT_MAX_FRAC * len(res)
+        rest = [r for r in res if not r.get("context_uncertain")]
+        if flagged:
+            sub = summarize([{**r, "context_rule": None} for r in rest])
+            s["subset_without_context"] = {k: sub[k] for k in ("n", "static_iou", "dyn_err_px", "dyn_tail_frac",
+                                                              "final_obj_iou", "G2_target_evidence")}
+            checks["subset_without_context"] = sub["G2_target_evidence"]
+        else:
+            checks["subset_without_context"] = True
     s["checks"] = checks
     s["thresholds"] = {"static_iou": G2_STATIC_IOU, "dyn_err_px": G2_DYN_PX, "dyn_tail_frac": G2_DYN_TAIL,
                        "final_obj_iou": G2_FINAL_IOU, "lost_rate": G2_MAX_LOST, "coverage": G2_MIN_COVERAGE,
@@ -348,6 +500,11 @@ def main():
     p.add_argument("--friction", default="", help="json {material: mu}")
     p.add_argument("--episodes", default="")
     p.add_argument("--params", default="", help='json {"tabletop.friction": 0.8, ...}')
+    p.add_argument("--world-tree-sha256", help="frozen compiled directory hash (required by S6 identification)")
+    p.add_argument("--require-bound-reference", action="store_true",
+                   help="refuse a legacy manifest without reference asset/state hashes")
+    p.add_argument("--context-rule", choices=["park_non_probe_v2"], default=None,
+                   help="G2 v2 initial-state rule (g2v2_rules); default keeps the v1 rule")
     a = p.parse_args()
     eps = a.episodes.split(",") if a.episodes else sorted(os.listdir(a.probes))
     validity = a.validity or default_validity(a.masks)
@@ -358,7 +515,8 @@ def main():
         print("G2_VALIDITY", len(man["episodes"]), "episodes ->", validity)
         return
     res = evaluate(a.world, a.state, a.probes, a.masks, eps, json.loads(a.friction) if a.friction else None,
-                   json.loads(a.params) if a.params else None, validity)
+                   json.loads(a.params) if a.params else None, validity, a.world_tree_sha256,
+                   a.require_bound_reference, a.context_rule)
     s = summarize(res)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     json.dump({"summary": s, "episodes": res}, open(a.out, "w"), indent=1)

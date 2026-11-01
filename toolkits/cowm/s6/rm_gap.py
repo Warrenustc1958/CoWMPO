@@ -28,7 +28,7 @@ for ep in sorted(os.listdir(PR)):
     instr = json.load(open(f"{EV}/{ep}/meta.json"))["language"]
     st = json.load(open(f"{ST}/{ep}/state.json"))["objects"]
     pr = json.load(open(f"{PR}/{ep}/probe.json"))
-    sc.reset(); apply_state(sc, st)
+    sc.reset(); apply_state(sc, st, require_matched=True)
     a = np.asarray(Image.open(f"{EV}/{ep}/frame0.png").convert("RGB")); b = sc.rgb()
     tgt0 += list(raw([a], instr)); fa = FEAT[-1][0]
     w0 += list(raw([b], instr)); fb = FEAT[-1][0]

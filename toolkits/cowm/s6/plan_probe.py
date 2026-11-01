@@ -34,10 +34,26 @@ def drive(scene, target, grip, acts, max_steps=50):
         acts.append(a.tolist())
 
 
-def apply_state(scene, state):
+def apply_state(scene, state, require_matched=False, robot=None):
+    """Install poses; planning and scored replay require verified identities.
+
+    Mechanical reset/snapshot diagnostics may install arbitrary poses without identity metadata.
+    """
+    from cowm.init.observation import state_issues
+    from cowm.init.robot_state import robot_issues, install_robot_state, validate_robot_platform
+
+    issues = state_issues(state, [o["name"] for o in scene.world["objects"]]) if require_matched else {}
+    invalid_robot = robot_issues(robot)
+    if invalid_robot:
+        issues["_robot"] = invalid_robot
+    if issues:
+        raise ValueError(f"state cannot initialize a probe: {issues}")
+    validate_robot_platform(scene, robot)
     for k, o in enumerate(scene.world["objects"]):
         s = state[o["name"]]
-        scene.set_pose(k, s["pos"][:2], s["yaw"])
+        scene.set_pose(k, s["pos"][:2], s["yaw"], s["pos"][2])
+    if robot is not None:
+        install_robot_state(scene, robot)
 
 
 def main():
@@ -59,9 +75,12 @@ def main():
     eps = a.episodes.split(",") if a.episodes else sorted(
         e for e in os.listdir(a.state) if os.path.isfile(os.path.join(a.state, e, "state.json")))
     for ep in eps:
-        state = json.load(open(os.path.join(a.state, ep, "state.json")))["objects"]
+        document = json.load(open(os.path.join(a.state, ep, "state.json")))
+        state = document["objects"]
         scene.reset()
-        apply_state(scene, state)
+        if document.get("robot_required") and document.get("robot") is None:
+            raise ValueError(f"{ep}: required robot initialization is missing")
+        apply_state(scene, state, require_matched=True, robot=document.get("robot"))
         bx, by = state[a.obj]["pos"][:2]
         z = top + min(0.03, o["top_z"] * 0.6)
         acts = []

@@ -62,9 +62,11 @@ class Scene:
             obs, _, _, _ = self.env.step(HOLD)
         return np.ascontiguousarray(obs["agentview_image"][::-1, ::-1])
 
-    def set_pose(self, k, xy, yaw):
+    def set_pose(self, k, xy, yaw, z=None):
         o, ob = self.world["objects"][k], self.env.objects[k]
-        pos = np.array([xy[0], xy[1], o["pos"][2]])
+        pos = np.array([xy[0], xy[1], o["pos"][2] if z is None else z], dtype=float)
+        if not np.all(np.isfinite(pos)) or not np.isfinite(yaw):
+            raise ValueError("object pose must contain finite xyz and yaw")
         quat = yaw_quat(yaw)
         sim = self.env.sim
         if o["free"]:
@@ -113,8 +115,11 @@ def iou(a, b):
     return float(np.logical_and(a, b).sum() / u) if u else 0.0
 
 
-def estimate(scene, masks):
+def estimate(scene, masks, association=None, allow_legacy=False):
+    from cowm.init.observation import select_masks
+
     objs = scene.world["objects"]
+    masks, identity = select_masks([o["name"] for o in objs], masks, association, allow_legacy)
     # reject masks that are mostly the robot (rendered from the shared platform prior)
     rob = scene.robot_mask()
     rejected = [n for n, mk in masks.items() if mk.sum() and (mk & rob).sum() / mk.sum() > 0.5]
@@ -221,6 +226,7 @@ def estimate(scene, masks):
         res[o["name"]] = {"pos": [xy[0], xy[1], o["pos"][2]], "yaw": yaw,
                           "pos_rel_base": [xy[0] - scene.base[0], xy[1] - scene.base[1]],
                           "observed": o["name"] in masks, "mask_rejected": o["name"] in rejected,
+                          "association_status": identity[o["name"]],
                           "parked": o["name"] in parked,
                           "aabb_center_rel_base": (c - scene.base).tolist() if c is not None else None,
                           "aabb_half": h.tolist() if h is not None else None,
@@ -235,9 +241,13 @@ def main():
     p.add_argument("--masks", required=True, help="EvidenceAdapter output root (<episode>/masks.npz)")
     p.add_argument("--out", required=True)
     p.add_argument("--episodes", default="")
+    p.add_argument("--allow-legacy-masks", action="store_true",
+                   help="diagnostic only: fit masks without association metadata; state stays unverified")
     a = p.parse_args()
     import time
+    from cowm.world.artifact import tree_sha, verify_tree
 
+    world_hash = tree_sha(a.world)
     scene = Scene(a.world)
     first = scene.reset()
     # orientation self-check: segmentation and RGB renders must agree with the observation pipeline
@@ -251,11 +261,14 @@ def main():
         scene.reset()
         m = np.load(os.path.join(a.masks, ep, "masks.npz"))
         masks = {k: m[k] for k in m.files}
-        res, best, n, seg = estimate(scene, masks)
+        from cowm.init.observation import load_association
+        association = load_association(os.path.join(a.masks, ep), ep)
+        res, best, n, seg = estimate(scene, masks, association, a.allow_legacy_masks)
         d = os.path.join(a.out, ep)
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, "state.json"), "w") as fh:
             json.dump({"episode": ep, "world_sha256": scene.world["world_sha256"], "objects": res,
+                       "world_tree_sha256": world_hash,
                        "score": best, "renders": n}, fh, indent=1)
         np.savez_compressed(os.path.join(d, "render_masks.npz"),
                             **{n: seg == k for k, n in enumerate(scene.names)})
@@ -265,6 +278,8 @@ def main():
         print(ep, f"{time.time() - t0:.0f}s renders={n}", summary[ep], flush=True)
     with open(os.path.join(a.out, "summary.json"), "w") as fh:
         json.dump(summary, fh, indent=1)
+    verify_tree(a.world, world_hash)
+    scene.env.close()
 
 
 if __name__ == "__main__":

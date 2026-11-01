@@ -39,7 +39,7 @@ check_init_frame: False   # L1: frame 0 comes from the world itself (session_fra
 init_frame_tol: 0.005     # max fraction of pixels changing by >25/255 vs the condition frame
 
 enable_kir: False
-initial_image_path: /data_cf/cowmpo/init/libero_goal_v1   # gen_init_dataset.py output + manifest.json
+initial_image_path: /data_cf/cowmpo/init/libero_goal_fit3   # fit-role trials 3-5 (splits_goal_v1); never gate3
 
 chunk: 8                     # same as chunk in VLA
 condition_frame_length: 5    # kept for the env's frame window; the world needs only the last frame
@@ -50,7 +50,7 @@ reward_model:   # same RM as the Wan-Goal branch
   from_pretrained: /mnt/nfs/fjj/Models/RLinf-Wan-LIBERO-Goal/taskemb_resnet_rm.pth
 
 # ---- L1 (plan 9.7-E): Builder world + S5 per-episode state + S6 runtime params; no LIBERO scene ----
-world_dir: /data_cf/cowmpo/worlds/s6_ident_v2/world_r050   # S6 param+struct selection (bowl_radius 0.05)
-state_dir: /data_cf/cowmpo/worlds/s6_ident_v2/state_r050
-world_friction: {ceramic: 0.7}
+world_dir: /data_cf/cowmpo/worlds/codex_s56_20261030_1020/bowl_support_dev_v1/world11   # G2 v2 passed (version d3e48451, bowl strike only)
+state_dir: /data_cf/cowmpo/worlds/codex_s56_20261030_1020/s6_natural_v3/shape_states   # fit trials 0-5, estimated on world11
+world_friction: {ceramic: 0.41143971716876265}   # G2 v2 nomination params
 cowm_toolkits: /mnt/nfs/fjj/Code/CoWMPO/toolkits

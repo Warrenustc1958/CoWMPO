@@ -18,10 +18,10 @@ from cowm.s6.plan_probe import apply_state
 MIN_PX = 2.0
 
 
-def final_centroid(scene, state, probe, values):
+def final_centroid(scene, state, probe, values, robot=None):
     apply_params(scene, values)
     scene.reset()
-    apply_state(scene, state)
+    apply_state(scene, state, require_matched=True, robot=robot)
     for act in probe["actions"]:
         scene.env.step(np.asarray(act))
     k = scene.names.index(probe["obj"])
@@ -49,9 +49,13 @@ def main():
         grid = [lo, spec[n]["init"], hi]
         spreads, disps = [], []
         for ep in eps:
-            state = json.load(open(os.path.join(a.state, ep, "state.json")))["objects"]
+            with open(os.path.join(a.state, ep, "state.json")) as stream:
+                document = json.load(stream)
+            if document.get("robot_required") and document.get("robot") is None:
+                raise ValueError(f"{ep}: required robot initialization is missing")
+            state = document["objects"]
             probe = json.load(open(os.path.join(a.probes, ep, "probe.json")))
-            cs, ds = zip(*[final_centroid(scene, state, probe, {n: v}) for v in grid])
+            cs, ds = zip(*[final_centroid(scene, state, probe, {n: v}, document.get("robot")) for v in grid])
             cs = np.array(cs)
             spreads.append(float(np.nanmax(np.linalg.norm(cs - cs[1], axis=1))))
             disps.append([float(np.linalg.norm(d - ds[1]) * 100) for d in ds])
