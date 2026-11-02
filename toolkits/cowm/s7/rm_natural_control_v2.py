@@ -76,7 +76,7 @@ class RMScorer:
         return self.rm.fusion_layer(f).squeeze(1).float().cpu().numpy()
 
 
-def rollout_task(model, rm, suite, task_id, trials, a):
+def rollout_task(model, rm, suite, task_id, trials, a, manifest=None):
     from rlinf.envs.action_utils import prepare_actions_for_libero
 
     task = suite.get_task(task_id)
@@ -85,10 +85,22 @@ def rollout_task(model, rm, suite, task_id, trials, a):
     n = len(envs)
     obs, rec = [], []
     for env, tr in zip(envs, trials):
-        env.reset()
-        env.set_init_state(inits[tr])
+        warm = np.zeros(7)
+        if manifest is not None:
+            # same reset as CodeBackend.reset_to_episode (S5 states / code-world replays are built on it):
+            # privileged fixture poses from the init dir + set_init_state + 15 warm steps with gripper -1
+            ep = manifest["episodes"][f"libero_goal_t{task_id}_i{tr}.npy"]
+            env.reset()
+            priv = np.load(os.path.join(a.init_dir, ep["privileged"]))
+            env.env.sim.model.body_pos[:] = priv["body_pos"]
+            env.env.sim.model.body_quat[:] = priv["body_quat"]
+            env.set_init_state(inits[tr])
+            warm[6] = -1.0
+        else:   # legacy v2 reset: LIBERO re-samples fixture poses, so not comparable with S5 states
+            env.reset()
+            env.set_init_state(inits[tr])
         for _ in range(15):
-            o, _, _, _ = env.step(np.zeros(7))
+            o, _, _, _ = env.step(warm)
         obs.append(o)
         f0 = frame(o)
         rec.append({"trial": tr, "actions": [], "labels": [bool(env.env._check_success())],
@@ -195,7 +207,11 @@ def main():
     p.add_argument("--frame-every", type=int, default=4, help="saved frames (all frames are scored)")
     p.add_argument("--temperature", type=float, default=1.6)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--init-dir", default=None,
+                   help="init dir with manifest.json + privileged/ (e.g. init/libero_goal_fit3): reset like "
+                        "CodeBackend.reset_to_episode; required for any frame-paired comparison with S5 states")
     a = p.parse_args()
+    manifest = json.load(open(os.path.join(a.init_dir, "manifest.json"))) if a.init_dir else None
     trials = [int(x) for x in a.trials.split(",")]
     assert all(0 <= t < 20 for t in trials), "fit split only"
     os.makedirs(os.path.join(a.out, "episodes"), exist_ok=True)
@@ -209,10 +225,11 @@ def main():
     rm = RMScorer(dev)
     records, per_task = [], {}
     cfg = vars(a) | {"policy": MODEL, "rm": RM, "chunk": CHUNK, "action_post": "prepare_actions_for_libero",
-                     "image": "agentview rot180 RGB [-1,1] 256px", "warmup": "15 x zeros(7)"}
+                     "image": "agentview rot180 RGB [-1,1] 256px", "warmup": ("privileged poses + set_init_state + 15 x gripper -1" if manifest is not None
+                                else "15 x zeros(7), LIBERO-resampled fixtures")}
     for tid in [int(x) for x in a.tasks.split(",")]:
         t0 = time.time()
-        instr, eps = rollout_task(model, rm, suite, tid, trials, a)
+        instr, eps = rollout_task(model, rm, suite, tid, trials, a, manifest)
         for e in eps:
             e["task_id"], e["instruction"] = tid, instr
             np.savez_compressed(os.path.join(a.out, "episodes", f"t{tid}_i{e['trial']}.npz"),

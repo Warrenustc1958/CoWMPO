@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # S7 RM natural control v2 (per-action success time, every frame scored, actions saved).
-# Usage: run_rm_natural_v2.sh <gpu> <out> <tasks> <trials> [lock]
+# Usage: run_rm_natural_v2.sh <gpu> <out> <tasks> <trials> [lock] [init_dir]
+# init_dir (e.g. /data_cf/cowmpo/init/libero_goal_fit3): reset like CodeBackend.reset_to_episode; required
+# whenever results are compared frame-by-frame with S5 states or code-world replays.
 # Exit 0 only if: <out> had no previous run, python exited 0, report.json lists exactly tasks x trials,
 # one npz per episode, and validate_rm_run.py accepts every file's content (loadable arrays, shapes, identity).
 # Exit codes: 75 lock busy, 5 stale output, python's own code, 3 count mismatch, 4 content invalid.
 # Launch long runs detached (setsid nohup ...); that is an operational measure only: the SIGKILL (exit 137)
 # seen on 10-29 has no identified cause (existing checks found no evidence of OOM/cgroup/logind/cron).
 set -uo pipefail
-GPU=$1; OUT=$2; TASKS=$3; TRIALS=$4; LOCK=${5:-/tmp/rlinf-libero-run.lock}
+GPU=$1; OUT=$2; TASKS=$3; TRIALS=$4; LOCK=${5:-/tmp/rlinf-libero-run.lock}; INIT=${6:-}
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 PYV=${COWM_POLICY_PY:-/data_cf/cowmpo/.venv-oft-wan/bin/python}
 if [ -e "$OUT/report.json" ] || [ -e "$OUT/episodes" ]; then
@@ -19,7 +21,7 @@ flock -w 3600 9 || { echo "RUN_FAILED lock busy: $LOCK"; exit 75; }
 echo "start $(date -Is) host $(hostname) pid $$ gpu $GPU tasks $TASKS trials $TRIALS" > "$OUT/run_status.txt"
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=$GPU MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa \
   $PYV "$HERE/rm_natural_control_v2.py" --out "$OUT" --tasks "$TASKS" \
-  --trials "$TRIALS" 2>&1 | grep --line-buffered -vE "WARNING|tensorflow|GetPrototype|cuda_(dnn|fft|blas)|TensorRT|oneDNN|AVX"
+  --trials "$TRIALS" ${INIT:+--init-dir "$INIT"} 2>&1 | grep --line-buffered -vE "WARNING|tensorflow|GetPrototype|cuda_(dnn|fft|blas)|TensorRT|oneDNN|AVX"
 rc=${PIPESTATUS[0]}
 echo "python_exit $rc $(date -Is)" >> "$OUT/run_status.txt"
 if [ "$rc" -ne 0 ]; then

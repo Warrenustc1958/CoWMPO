@@ -66,6 +66,10 @@ class CodeBackend:
             self.world_dir = str(cfg.world_dir)
             self.state_dir = str(cfg.state_dir)
             self.world_friction = dict(cfg.get("world_friction", {}) or {})
+            # data-role guard (cowm.roles / splits_goal_v1): e.g. [fit] for L1 training configs, so a dev,
+            # gate or test episode can never be opened by a training rollout. None = no check (eval/tests).
+            rr = cfg.get("require_roles", None)
+            self.require_roles = set(rr) if rr else None
             self._first: dict[int, torch.Tensor] = {}
         self.num_steps_wait = int(cfg.get("num_steps_wait", 15))
         self.check_init_frame = bool(cfg.get("check_init_frame", True))
@@ -101,8 +105,13 @@ class CodeBackend:
 
     def set_session_episodes(self, env_ids: Sequence[int], episode_files: Sequence[str]) -> None:
         """Called by WorldModelEnv.reset before open_session: which episode each slot starts."""
-        for env_id, path in zip(env_ids, episode_files):
-            self._slot_episode[int(env_id)] = os.path.basename(path)
+        names = [os.path.basename(path) for path in episode_files]
+        if self.mode == "l1_world" and self.require_roles:
+            from cowm.roles import require
+
+            require([n[:-4] if n.endswith(".npy") else n for n in names], self.require_roles, "L1 session")
+        for env_id, name in zip(env_ids, names):
+            self._slot_episode[int(env_id)] = name
 
     def _benchmark(self):
         if self._suite is None:
